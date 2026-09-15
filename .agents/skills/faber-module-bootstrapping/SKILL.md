@@ -321,19 +321,19 @@ EF-backed modules must also register their `DbContext` with the migration runner
 
 ### Deploy-time flow
 
-The `faber-migrations` Docker image is built alongside `faber-api` on release (see `.github/workflows/build-images.yml`). In the production orchestrator:
+The `faber-migrations` Docker image is built alongside `faber-api` on release (see `.github/workflows/build-images.yml`). In the production orchestrator, where `<OWNER>` is the repository owner's login in lowercase:
 
 ```yaml
 services:
   faber-migrations:
-    image: ghcr.io/1viski/faber-migrations:${TAG}
+    image: ghcr.io/<OWNER>/faber-migrations:${TAG}
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__faberdb: ${FABERDB_CONNSTR}
     restart: "no"
 
   faberapi:
-    image: ghcr.io/1viski/faber-api:${TAG}
+    image: ghcr.io/<OWNER>/faber-api:${TAG}
     depends_on:
       faber-migrations:
         condition: service_completed_successfully
