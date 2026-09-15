@@ -1,0 +1,19 @@
+name: Dependency review
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      # Blocks a pull request that introduces a dependency with a known
+      # vulnerability. The default low threshold would keep this red on
+      # low-severity advisories in npm development dependencies, so it fails
+      # from moderate upward.
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: moderate
