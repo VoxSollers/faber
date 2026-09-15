@@ -1,0 +1,52 @@
+<div class="flex flex-col gap-1.5">
+  @if (label()) {
+    <label
+      [for]="inputId"
+      class="text-sm font-medium transition-colors"
+      [class]="labelClasses()">
+      {{ label() }}
+    </label>
+  }
+
+  <div class="relative">
+    <input
+      [id]="inputId"
+      [formControl]="internalCtrl"
+      [matDatepicker]="picker"
+      [readonly]="isPresent()"
+      [placeholder]="isPresent() ? 'Present' : placeholder()"
+      [attr.aria-describedby]="errorMessage() ? errorId : null"
+      [attr.aria-invalid]="hasError() || null"
+      [class]="inputClasses()"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+    />
+    <div class="toggle-wrap absolute inset-y-0 right-0 flex items-center pr-1">
+      <mat-datepicker-toggle [for]="picker" [disableRipple]="true" />
+    </div>
+    <mat-datepicker
+      #picker
+      panelClass="fb-date-picker-panel"
+      [startView]="startView()"
+      (monthSelected)="onMonthSelected($event, picker)"
+      (yearSelected)="onYearSelected($event, picker)">
+      @if (allowPresent()) {
+        <mat-datepicker-actions>
+          <div class="flex w-full items-center justify-start" [class.fb-present-on]="isPresent()">
+            <fb-switch
+              [checked]="isPresent()"
+              (checkedChange)="togglePresent()"
+              label="Present"
+              ariaLabel="Mark end date as present / ongoing" />
+          </div>
+        </mat-datepicker-actions>
+      }
+    </mat-datepicker>
+  </div>
+
+  @if (errorMessage()) {
+    <span [id]="errorId" role="alert" class="mt-1 text-xs text-destructive-text">
+      {{ errorMessage() }}
+    </span>
+  }
+</div>

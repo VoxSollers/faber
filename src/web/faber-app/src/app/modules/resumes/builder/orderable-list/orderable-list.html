@@ -1,0 +1,69 @@
+<div class="flex flex-col gap-3">
+  @if (!hideTitle()) {
+    <h2 class="text-lg font-semibold text-foreground">{{ title() }}</h2>
+  }
+
+  @if (items().length) {
+    <fb-accordion
+      class="orderable-drop rounded-xl border-[0.5px] border-line overflow-hidden"
+      cdkDropList
+      [cdkDropListData]="items()"
+      (cdkDropListDropped)="onDrop($event)">
+      @for (item of items(); track item.id) {
+        <fb-accordion-item
+          #ai
+          roundChevron
+          cdkDrag
+          cdkDragLockAxis="y"
+          cdkDragBoundary=".orderable-drop"
+          [label]="titleFn()(item)">
+          <span
+            fbAccordionPrefix
+            cdkDragHandle
+            class="ml-4 max-md:ml-2 mr-2 max-md:mr-1 cursor-grab text-muted-foreground"
+            aria-hidden="true"
+            (pointerdown)="ai.collapseForDrag()">
+            <lucide-icon name="grip-vertical" [size]="18" [strokeWidth]="2" aria-hidden="true" />
+          </span>
+          <button
+            fbAccordionSuffix
+            fb-icon-button
+            intent="destructive"
+            size="lg"
+            type="button"
+            class="mr-2 max-md:mr-1 max-md:h-11 max-md:w-11"
+            [attr.aria-label]="'Delete ' + titleFn()(item)"
+            (click)="onDelete(item, $event)">
+            <lucide-icon name="trash-2" [size]="18" [strokeWidth]="2" aria-hidden="true" />
+          </button>
+          <ng-container
+            [ngTemplateOutlet]="itemTemplate()"
+            [ngTemplateOutletContext]="{ $implicit: item }" />
+        </fb-accordion-item>
+      }
+    </fb-accordion>
+  }
+
+  <!-- #407 — the two themes are treated separately because --color-primary
+       (78.4%) sits between the light card (98.5%) and the dark card (31%), so
+       one treatment cannot read the same on both. The original /10 measured
+       1.07 in light and 1.21 in dark.
+
+       Light keeps a wash, raised to /38 — that lands on 1.29, the same
+       separation --color-surface has against the card, which is the benchmark
+       for "clearly perceptible" here. Dark takes the solid accent (6.55).
+
+       The label override is dark-only: --color-muted-foreground holds 5.31 on
+       the light wash but collapses to 1.33 on the solid yellow. It becomes
+       --color-primary-foreground there — not --color-foreground, which flips to
+       near-white in dark and measures 1.90 on this fill. Icon follows via
+       currentColor. -->
+  <button
+    type="button"
+    class="flex items-center justify-center gap-1.5 w-full px-4 py-2.5 rounded-full bg-transparent border-0 cursor-pointer text-sm font-semibold text-muted-foreground transition-colors hover:bg-primary/38 dark:hover:bg-primary dark:hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    [attr.aria-label]="resolvedAddLabel()"
+    (click)="onAdd()">
+    <lucide-icon name="plus" [size]="18" [strokeWidth]="2" aria-hidden="true" />
+    <span>{{ resolvedAddLabel() }}</span>
+  </button>
+</div>

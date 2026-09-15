@@ -1,0 +1,79 @@
+<div class="fixed inset-0 z-40 drawer-scrim" [class.open]="isDrawerOpen()"></div>
+<div
+  class="fixed top-0 left-0 right-0 z-50 navbar-shell"
+  [class.navbar-shell--glass]="isScrolled() || isDrawerOpen()"
+  [class.navbar-shell--top]="!isScrolled() && !isDrawerOpen()"
+  [class.navbar-shell--drawer]="isDrawerOpen()">
+  <nav>
+    <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+      <a [routerLink]="routes.home" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <span class="self-center font-display text-foreground text-2xl font-semibold whitespace-nowrap">{{ title() }}</span>
+      </a>
+
+      <!-- Desktop nav links -->
+      <ul class="hidden md:flex md:items-center md:space-x-4 rtl:space-x-reverse">
+        <li><a [routerLink]="routes.home" routerLinkActive="nav-active" [routerLinkActiveOptions]="{exact: true}" class="mobile-nav-link main-menu-link inline-flex items-center font-medium min-h-10 text-foreground/80 px-5 rounded-full"><span class="mobile-nav-link__label">Home</span></a></li>
+        <li><a [routerLink]="routes.about" routerLinkActive="nav-active" class="mobile-nav-link main-menu-link inline-flex items-center font-medium min-h-10 text-foreground/80 px-5 rounded-full"><span class="mobile-nav-link__label">About</span></a></li>
+        <li><a [routerLink]="routes.resumes" routerLinkActive="nav-active" class="mobile-nav-link main-menu-link inline-flex items-center font-medium min-h-10 text-foreground/80 px-5 rounded-full"><span class="mobile-nav-link__label">Resumes</span></a></li>
+      </ul>
+
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <fb-theme-toggle />
+        @if (authStore.loading() && !authStore.authenticated()) {
+          <fb-spinner class="h-10 w-10 text-primary" />
+        } @else {
+          @if (authStore.authenticated()) {
+            <div class="relative">
+              <button
+                #userMenuAnchor
+                (click)="toggleUserMenuDropdown()"
+                type="button"
+                class="flex text-sm bg-transparent rounded-full md:me-0 cursor-pointer focus:outline-none">
+                <span class="sr-only">Open user menu</span>
+                <fb-initials [firstName]="authStore.user()!.firstName"
+                             [lastName]="authStore.user()!.lastName" />
+              </button>
+            </div>
+          } @else {
+            <div class="hidden sm:flex flex-row space-x-2">
+              <a [routerLink]="routes.auth.signIn"
+                 class="mobile-nav-link main-menu-link w-auto inline-flex items-center justify-center font-medium min-h-10 text-foreground/80 text-center px-5 rounded-full"><span class="mobile-nav-link__label">Sign in</span></a>
+              <a [routerLink]="routes.auth.signUp"
+                 class="mobile-nav-link main-menu-link mobile-nav-link--primary w-auto inline-flex items-center justify-center font-medium min-h-10 text-foreground text-center px-5 rounded-full"><span class="mobile-nav-link__label">Sign up</span></a>
+            </div>
+          }
+        }
+        <fb-toggle-button (clicked)="toggleDrawer()" [isOpen]="isDrawerOpen()" />
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile dropdown menu -->
+  <div [class.open]="isDrawerOpen()" class="mobile-menu">
+    <ul class="max-w-screen-xl mx-auto flex flex-col px-4 py-3 space-y-2">
+      <li><a [routerLink]="routes.home" routerLinkActive="nav-active" [routerLinkActiveOptions]="{exact: true}" class="mobile-nav-link flex items-center justify-center w-full font-medium min-h-10 text-foreground/80 px-5 rounded-full"><span class="mobile-nav-link__label">Home</span></a></li>
+      <li><a [routerLink]="routes.about" routerLinkActive="nav-active" class="mobile-nav-link flex items-center justify-center w-full font-medium min-h-10 text-foreground/80 px-5 rounded-full"><span class="mobile-nav-link__label">About</span></a></li>
+      <li><a [routerLink]="routes.resumes" routerLinkActive="nav-active" class="mobile-nav-link flex items-center justify-center w-full font-medium min-h-10 text-foreground/80 px-5 rounded-full"><span class="mobile-nav-link__label">Resumes</span></a></li>
+    </ul>
+
+    @if (!authStore.loading() && !authStore.authenticated()) {
+      <div class="flex flex-col gap-2 max-w-screen-xl mx-auto px-4 pb-4 sm:hidden">
+        <div class="border-t border-line pt-3 flex flex-row gap-2">
+          <a [routerLink]="routes.auth.signIn"
+             class="mobile-nav-link flex-1 flex items-center justify-center text-center py-3 px-4 font-medium rounded-full text-foreground/80"><span class="mobile-nav-link__label">Sign in</span></a>
+          <a [routerLink]="routes.auth.signUp"
+             class="mobile-nav-link mobile-nav-link--primary flex-1 flex items-center justify-center text-center py-3 px-4 font-medium rounded-full text-foreground"><span class="mobile-nav-link__label">Sign up</span></a>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@if (authStore.authenticated()) {
+  <app-user-menu [user]="authStore.user()!"
+                 (closed)="isUserMenuDropdownVisible.set(false)"
+                 [class.open]="isUserMenuDropdownVisible()"
+                 [style.top.px]="userMenuTop()"
+                 [style.right.px]="userMenuRight()"
+                 class="user-menu-dropdown fixed z-50 text-base list-none divide-y divide-line" />
+}

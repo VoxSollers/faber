@@ -1,0 +1,17 @@
+/* Glass recipe + refraction rim come from the shared .glass-surface class
+   (styles.css, #371); only the open/close motion lives here. */
+:host {
+  display: block;
+  border-radius: 0.75rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.95);
+  transform-origin: top right;
+  transition: opacity 200ms ease, visibility 200ms ease, transform 200ms ease;
+}
+
+:host(.open) {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}

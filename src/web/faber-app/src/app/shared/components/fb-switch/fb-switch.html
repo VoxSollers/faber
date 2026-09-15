@@ -1,0 +1,28 @@
+<label
+  class="inline-flex select-none items-center gap-2"
+  [class.cursor-pointer]="!displayDisabled()"
+  [class.cursor-not-allowed]="displayDisabled()">
+  <span class="relative inline-block h-[2em] w-[3.5em] shrink-0 text-[12px]" [class.opacity-60]="displayDisabled()">
+    <input
+      [id]="inputId"
+      type="checkbox"
+      role="switch"
+      class="peer sr-only"
+      [checked]="displayChecked()"
+      [disabled]="displayDisabled()"
+      [attr.aria-label]="ariaLabel() || label() || null"
+      (change)="onToggle($event)"
+      (blur)="onBlur()" />
+    <span
+      class="absolute inset-0 rounded-full bg-muted-foreground/40 transition-colors duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)]
+        peer-checked:bg-primary
+        peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-card
+        before:absolute before:left-0 before:top-0 before:h-[2em] before:w-[2em] before:rounded-full before:bg-white before:content-['']
+        before:shadow-[0_2px_6px_rgba(0,0,0,0.3)]
+        before:transition-transform before:duration-300 before:ease-[cubic-bezier(0.175,0.885,0.32,1.275)]
+        peer-checked:before:translate-x-[1.6em]"></span>
+  </span>
+  @if (label()) {
+    <span class="text-sm font-medium text-muted-foreground">{{ label() }}</span>
+  }
+</label>

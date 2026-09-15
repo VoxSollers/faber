@@ -1,0 +1,50 @@
+<div class="dotted-background min-h-[calc(100vh-var(--navbar-height))]">
+  @if (loading()) {
+    <div class="flex min-h-[calc(100vh-var(--navbar-height))] items-center justify-center" role="status" aria-label="Loading resumes">
+      <fb-spinner class="h-10 w-10 text-primary" />
+    </div>
+  } @else {
+    <div class="max-w-screen-xl mx-auto px-4 py-10">
+
+      <div class="flex items-center gap-4 mb-8">
+        <h1 class="font-serif text-[1.75rem] font-bold text-foreground">My Resumes</h1>
+        @if (resumes().length > 0) {
+          <button
+            type="button"
+            fb-button variant="primary" size="md"
+            (click)="createResume()">
+            <lucide-icon name="badge-plus" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+            New Resume
+          </button>
+        }
+      </div>
+
+      @if (resumes().length === 0) {
+        <div class="flex flex-col items-center gap-4 py-20 text-center">
+          <p class="text-base text-muted-foreground">You have no resumes yet.</p>
+          <button
+            type="button"
+            fb-button variant="primary" size="md"
+            (click)="createResume()">
+            <lucide-icon name="badge-plus" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+            Create your first resume
+          </button>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          @for (resume of resumes(); track resume.id) {
+            <app-resume-card
+              [resume]="resume"
+              (open)="navigateTo($event)"
+              (delete)="deleteResume($event)"
+              (titleChange)="renameResume($event.id, $event.title)" />
+          }
+        </div>
+      }
+
+    </div>
+  }
+</div>
+
+<fb-toast [message]="error()" (dismissed)="error.set(null)" />
+

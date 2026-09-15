@@ -1,0 +1,11 @@
+<button (click)="onButtonClick()"
+        [attr.aria-expanded]="isOpen()"
+        class="inline-flex size-10 cursor-pointer items-center justify-center transition-[border-radius,background-color,color] duration-200 ease-out hover:rounded-xl focus:outline-none md:hidden"
+        [class]="stateClasses()"
+        type="button">
+  <span class="sr-only">Open main menu</span>
+  <div [class.open]="isOpen()" class="burger">
+    <span></span>
+    <span></span>
+  </div>
+</button>

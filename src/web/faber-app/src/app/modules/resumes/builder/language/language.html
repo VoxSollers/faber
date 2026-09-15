@@ -1,0 +1,20 @@
+<app-orderable-list
+  [items]="store.languages()"
+  [hideTitle]="true"
+  title="Languages"
+  addLabel="Add language"
+  [titleFn]="languageTitle"
+  (add)="store.addLanguage()"
+  (delete)="store.deleteLanguage($event)"
+  (itemDrop)="store.reorderLanguages($event)">
+  <ng-template let-item>
+    <form [formGroup]="getForm(item)" class="grid grid-cols-[repeat(auto-fit,minmax(11rem,1fr))] gap-3 py-2">
+      <div
+        (focusin)="onTitleFocusIn(item)"
+        (focusout)="onTitleFocusOut(item, $event)">
+        <fb-field label="Language" placeholder="e.g. English" formControlName="name" />
+      </div>
+      <fb-select label="Level" placeholder="Select level" [options]="languageLevels" formControlName="level" />
+    </form>
+  </ng-template>
+</app-orderable-list>

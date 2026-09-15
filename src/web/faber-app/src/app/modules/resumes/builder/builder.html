@@ -1,0 +1,223 @@
+@if (store.isLoading()) {
+  <div class="builder-canvas flex h-dvh items-center justify-center" role="status" aria-label="Loading resume">
+    <fb-spinner class="h-10 w-10 text-primary" />
+  </div>
+} @else {
+  <div class="builder-canvas flex h-dvh flex-col overflow-hidden">
+
+    <!-- Top bar: three separate pill islands -->
+    <header class="shrink-0 flex items-center justify-center gap-2.5 max-md:gap-1.5 px-3 pt-4 pb-2">
+      <!-- Pill 1 — Back -->
+      <button
+        type="button"
+        aria-label="Back to resumes"
+        title="Back to resumes"
+        class="p-2.5 inline-flex items-center justify-center bg-card border-[0.5px] border-line text-foreground rounded-[20px] cursor-pointer transition-[border-radius] duration-200 ease-out hover:rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        (click)="goBack()">
+        <lucide-icon name="arrow-left" [size]="20" [strokeWidth]="2.2" aria-hidden="true" />
+      </button>
+
+      <!-- Pill 2 — resume title / role -->
+      <div class="py-0 pl-5 pr-0 max-md:pl-3 inline-flex items-center gap-3 bg-card border-[0.5px] border-line rounded-full min-w-0 max-w-[420px] max-md:max-w-none">
+        @if (isEditingTitle()) {
+          <span class="relative inline-grid min-w-0 max-w-[260px] overflow-hidden">
+            <span
+              data-testid="title-sizer"
+              aria-hidden="true"
+              class="col-start-1 row-start-1 invisible whitespace-pre text-[17px]"
+              style="font-family: var(--font-brand-serif)">{{ draftTitle() || 'Resume' }}</span>
+            <input
+              #titleInput
+              type="text"
+              size="1"
+              maxlength="100"
+              aria-label="Resume title"
+              class="col-start-1 row-start-1 w-full min-w-0 bg-transparent text-[17px] text-foreground outline-none caret-[var(--color-primary)]"
+              style="font-family: var(--font-brand-serif)"
+              [value]="store.title()"
+              (input)="draftTitle.set(titleInput.value)"
+              (blur)="commitTitle(titleInput.value)"
+              (keydown.enter)="commitTitle(titleInput.value)"
+              (keydown.escape)="cancelEditingTitle()" />
+            <span
+              data-testid="title-edit-underline"
+              class="pointer-events-none absolute bottom-0 left-0 h-0.5 w-full origin-left bg-primary animate-underline-in"
+              aria-hidden="true"></span>
+          </span>
+        } @else {
+          <span class="truncate text-[17px] text-foreground" style="font-family: var(--font-brand-serif)">{{ resumeTitle() }}</span>
+        }
+        <button
+          type="button"
+          class="shrink-0 grid place-items-center p-2.5 rounded-full bg-transparent cursor-pointer text-muted-foreground transition-colors duration-150 not-disabled:hover:bg-primary not-disabled:hover:text-primary-foreground disabled:cursor-default disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          aria-label="Edit resume title"
+          title="Edit resume title"
+          [disabled]="isEditingTitle()"
+          (click)="startEditingTitle()">
+          <lucide-icon name="pencil" [size]="20" [strokeWidth]="2" class="translate-y-[0.4px]" aria-hidden="true" />
+        </button>
+      </div>
+
+      <!-- Pill 3 — theme toggle + user avatar (user menu trigger) -->
+      @if (authStore.user(); as user) {
+        <div class="flex items-center gap-3">
+          <fb-theme-toggle />
+          <button
+            #profileAnchor
+            type="button"
+            aria-label="Open user menu"
+            class="flex bg-transparent rounded-full cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            (click)="toggleUserMenu()">
+            <fb-initials [firstName]="user.firstName" [lastName]="user.lastName" />
+          </button>
+        </div>
+      }
+    </header>
+
+    <!-- Body band: rail + list editor + PDF preview.
+         Below md (#425) the rail column is gone entirely — 60px of a 375px
+         screen spent duplicating what scrolling already does — and the editor
+         takes the whole band. Navigation and the action controls move to the
+         bottom bar below the band. -->
+    @if (store.resume()) {
+      <div class="flex flex-1 overflow-hidden gap-3 px-3 pb-3 max-md:pb-2">
+
+        @if (isWideScreen()) {
+          <!-- Rail column — bulk section controls stacked above the section rail -->
+          <div class="self-center flex flex-col items-center gap-2 shrink-0 min-h-0 max-h-full">
+
+            <!-- Bulk controls island — same treatment as the rail below it -->
+            <div
+              class="flex flex-col items-center gap-1.5 shrink-0 bg-card border-[0.5px] border-line rounded-full p-1.5"
+              role="group"
+              aria-label="Section controls">
+              <button
+                type="button"
+                class="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                aria-label="Expand all sections"
+                title="Expand all sections"
+                (click)="expandAllSections()">
+                <lucide-icon name="chevrons-up-down" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                class="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                aria-label="Collapse all sections"
+                title="Collapse all sections"
+                (click)="collapseAllSections()">
+                <lucide-icon name="chevrons-down-up" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+              </button>
+            </div>
+
+            <!-- Rail island — floating pill; scrolls on its own when the column runs out of height -->
+            <nav
+              class="flex flex-col items-center gap-1.5 bg-card border-[0.5px] border-line rounded-full p-1.5 min-h-0 overflow-y-auto"
+              aria-label="Resume sections">
+              @for (item of railItems; track item.id) {
+                <button
+                  type="button"
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full cursor-pointer bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  [attr.aria-label]="item.label"
+                  [title]="item.label"
+                  (click)="scrollTo(item.id)">
+                  <lucide-icon [name]="item.icon" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+                </button>
+              }
+            </nav>
+
+          </div>
+        }
+
+        <!-- Section list editor — shares the row 50/50 with the preview on wide
+             screens; owns the whole band on mobile, where the preview is a mode
+             rather than a column.
+
+             Hidden rather than unmounted when the mobile preview is showing:
+             which accordion sections are open lives in the SectionList
+             instance, so an @if here would reset the editor to its default
+             every time the user peeked at the PDF. `inert` keeps the hidden
+             pane out of the tab order and off the a11y tree. -->
+        <div
+          class="relative flex-1 min-w-0 bg-card border-[0.5px] border-line rounded-2xl overflow-y-auto"
+          data-testid="editor-pane"
+          [hidden]="!isWideScreen() && isMobilePreviewOpen()"
+          [inert]="!isWideScreen() && isMobilePreviewOpen()">
+          <app-editor />
+        </div>
+
+        <!-- PDF preview — the other half; the page fills its width and scrolls
+             vertically. Builder actions render as a row-level sibling (mirrors
+             the left rail) so the editor and preview cards stay equal flex
+             halves (wide screen only) -->
+        @if (isWideScreen()) {
+          <app-preview class="flex-1 min-w-0" />
+          <app-builder-actions />
+        } @else if (isMobilePreviewOpen()) {
+          <!-- Sole pane: the width lock would demand more than the viewport and
+               force horizontal overflow, so it is switched off here. -->
+          <app-preview class="flex-1 min-w-0" [lockWidth]="false" />
+        }
+
+      </div>
+
+      <!-- Mobile action bar — everything the desktop attached to the preview
+           column, plus the navigation the rail used to hold. Costs no
+           horizontal width and stays inside the thumb arc. -->
+      @if (!isWideScreen()) {
+        <div class="shrink-0 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div
+            data-testid="mobile-action-bar"
+            class="flex items-center gap-1 bg-card border-[0.5px] border-line rounded-full p-1.5">
+            <button
+              type="button"
+              data-testid="open-sections"
+              class="flex h-11 w-11 items-center justify-center rounded-full cursor-pointer bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              aria-label="Jump to section"
+              title="Jump to section"
+              (click)="openSectionSheet()">
+              <lucide-icon name="menu" [size]="20" [strokeWidth]="2" aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              data-testid="toggle-preview"
+              class="flex h-11 w-11 items-center justify-center rounded-full cursor-pointer bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              [attr.aria-pressed]="isMobilePreviewOpen()"
+              [attr.aria-label]="isMobilePreviewOpen() ? 'Show editor' : 'Show preview'"
+              [title]="isMobilePreviewOpen() ? 'Show editor' : 'Show preview'"
+              (click)="togglePreview()">
+              <lucide-icon
+                [name]="isMobilePreviewOpen() ? 'pencil' : 'eye'"
+                [size]="20" [strokeWidth]="2" aria-hidden="true" />
+            </button>
+
+            <span class="h-6 w-px bg-line mx-0.5" aria-hidden="true"></span>
+
+            <app-builder-actions orientation="horizontal" />
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="flex flex-1 items-center justify-center text-muted-foreground">
+        Resume not found.
+      </div>
+    }
+
+    <fb-toast
+      [message]="store.error()"
+      [variant]="store.noticeVariant()"
+      (dismissed)="store.clearError()" />
+  </div>
+}
+
+<!-- User menu (portal-positioned, anchored to the top-right avatar pill) -->
+@if (!store.isLoading() && authStore.user(); as user) {
+  <app-user-menu
+    #userMenu
+    [user]="user"
+    (closed)="isUserMenuVisible.set(false)"
+    [class.open]="isUserMenuVisible()"
+    [style.top.px]="userMenuTop()"
+    [style.right.px]="userMenuRight()"
+    class="user-menu-dropdown fixed z-50 list-none divide-y divide-line text-base" />
+}

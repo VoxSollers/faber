@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ErrorOr" Version="2.1.1" />
+        <PackageReference Include="FastEndpoints" Version="8.3.0" />
+        <PackageReference Include="HtmlSanitizer" Version="9.2.1039" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Identity\Faber.Modules.Identity.PublicApi\Faber.Modules.Identity.PublicApi.csproj"/>
+        <ProjectReference Include="..\..\Common\Faber.Modules.Common.PublicApi\Faber.Modules.Common.PublicApi.csproj"/>
+        <ProjectReference Include="..\..\Documents\Faber.Modules.Documents.Application\Faber.Modules.Documents.Application.csproj"/>
+        <ProjectReference Include="..\..\Users\Faber.Modules.Users.PublicApi\Faber.Modules.Users.PublicApi.csproj"/>
+        <ProjectReference Include="..\..\Vault\Faber.Modules.Vault.PublicApi\Faber.Modules.Vault.PublicApi.csproj"/>
+        <ProjectReference Include="..\Faber.Modules.Resumes.Domain\Faber.Modules.Resumes.Domain.csproj"/>
+        <ProjectReference Include="..\Faber.Modules.Resumes.Infrastructure\Faber.Modules.Resumes.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Faber.Modules.Resumes.PublicApi\Faber.Modules.Resumes.PublicApi.csproj"/>
+    </ItemGroup>
+
+</Project>

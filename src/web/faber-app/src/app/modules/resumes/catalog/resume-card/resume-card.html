@@ -1,0 +1,73 @@
+<div
+  class="relative flex flex-col gap-3 rounded-3xl border-[0.5px] border-line bg-card p-5 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+  role="button"
+  tabindex="0"
+  [attr.aria-label]="'Open resume ' + cardTitle()"
+  (click)="open.emit(resume().id)"
+  (keydown.enter)="open.emit(resume().id)"
+  (keydown.space)="$event.preventDefault(); open.emit(resume().id)">
+
+  <div class="flex items-center gap-3 min-w-0">
+    @if (isEditingTitle()) {
+      <span class="relative inline-grid min-w-0 overflow-hidden">
+        <span
+          data-testid="title-sizer"
+          aria-hidden="true"
+          class="col-start-1 row-start-1 invisible whitespace-pre font-serif text-[1.15rem] font-bold leading-tight">{{ draftTitle() || 'Untitled Resume' }}</span>
+        <input
+          #titleInput
+          type="text"
+          size="1"
+          maxlength="100"
+          aria-label="Resume title"
+          class="col-start-1 row-start-1 w-full min-w-0 bg-transparent font-serif text-[1.15rem] font-bold leading-tight text-foreground outline-none caret-[var(--color-primary)]"
+          [value]="resume().title || ''"
+          (input)="draftTitle.set(titleInput.value)"
+          (click)="$event.stopPropagation()"
+          (blur)="commitTitle(titleInput.value)"
+          (keydown.enter)="$event.stopPropagation(); commitTitle(titleInput.value)"
+          (keydown.escape)="$event.stopPropagation(); cancelEditingTitle()"
+          (keydown.space)="$event.stopPropagation()" />
+        <span
+          data-testid="title-edit-underline"
+          class="pointer-events-none absolute bottom-0 left-0 h-0.5 w-full origin-left bg-primary animate-underline-in"
+          aria-hidden="true"></span>
+      </span>
+    } @else {
+      <span class="truncate font-serif text-[1.15rem] font-bold leading-tight text-foreground">{{ cardTitle() }}</span>
+    }
+    <button
+      type="button"
+      data-testid="title-edit-btn"
+      class="shrink-0 grid place-items-center p-2.5 rounded-full bg-transparent cursor-pointer text-muted-foreground translate-y-[1px] transition-colors duration-150 not-disabled:hover:bg-primary not-disabled:hover:text-primary-foreground disabled:cursor-default disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      aria-label="Edit resume title"
+      title="Edit resume title"
+      [disabled]="isEditingTitle()"
+      (click)="$event.stopPropagation(); startEditingTitle()">
+      <lucide-icon name="pencil" [size]="20" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+  </div>
+
+  <p class="text-[0.8rem] tracking-[0.03em] text-foreground">{{ resume().createdAt | date:'mediumDate' }}</p>
+
+  <div class="flex gap-2">
+    <button
+      type="button"
+      data-testid="edit-btn"
+      fb-button variant="default" size="md" class="flex-1"
+      [attr.aria-label]="'Edit resume ' + cardTitle()"
+      (click)="$event.stopPropagation(); open.emit(resume().id)">
+      <lucide-icon name="square-pen" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+      Edit
+    </button>
+    <button
+      type="button"
+      data-testid="delete-btn"
+      fb-button variant="soft-destructive" size="md" class="flex-1"
+      [attr.aria-label]="'Delete resume ' + cardTitle()"
+      (click)="$event.stopPropagation(); delete.emit(resume().id)">
+      <lucide-icon name="trash-2" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+      Delete
+    </button>
+  </div>
+</div>

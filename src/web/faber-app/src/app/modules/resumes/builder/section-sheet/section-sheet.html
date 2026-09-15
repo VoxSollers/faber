@@ -1,0 +1,49 @@
+<div
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="section-sheet-title"
+  class="w-full max-h-[80dvh] overflow-y-auto rounded-t-3xl bg-card border-t-[0.5px] border-line pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg">
+
+  <!-- Grab affordance -->
+  <div class="mx-auto mb-2 h-1 w-10 rounded-full bg-line" aria-hidden="true"></div>
+
+  <div class="flex items-center justify-between gap-2 px-4 pb-2">
+    <h2 id="section-sheet-title" class="text-base font-semibold text-foreground">Jump to section</h2>
+    <div class="flex items-center gap-1" role="group" aria-label="Section controls">
+      <button
+        type="button"
+        class="flex h-11 w-11 items-center justify-center rounded-full cursor-pointer bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        aria-label="Expand all sections"
+        title="Expand all sections"
+        (click)="expandAll()">
+        <lucide-icon name="chevrons-up-down" [size]="18" [strokeWidth]="2" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        class="flex h-11 w-11 items-center justify-center rounded-full cursor-pointer bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        aria-label="Collapse all sections"
+        title="Collapse all sections"
+        (click)="collapseAll()">
+        <lucide-icon name="chevrons-down-up" [size]="18" [strokeWidth]="2" aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+
+  <nav aria-label="Resume sections">
+    <ul class="list-none m-0 p-0 px-2" role="list">
+      @for (item of items; track item.id) {
+        <li role="listitem">
+          <button
+            type="button"
+            class="flex w-full min-h-11 items-center gap-3 px-3 py-2.5 rounded-xl bg-transparent border-0 text-left text-[15px] text-foreground cursor-pointer transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            (click)="select(item.id)">
+            <span class="size-9 shrink-0 rounded-[10px] bg-lavender flex items-center justify-center text-foreground" aria-hidden="true">
+              <lucide-icon [name]="item.icon" [size]="18" [strokeWidth]="2" />
+            </span>
+            {{ item.label }}
+          </button>
+        </li>
+      }
+    </ul>
+  </nav>
+</div>

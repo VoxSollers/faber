@@ -1,0 +1,56 @@
+<div class="flex flex-col gap-1.5">
+  @if (label()) {
+    <label [for]="inputId"
+           class="text-[0.8rem] font-semibold tracking-[0.01em] transition-colors"
+           [class]="labelClasses()">
+      {{ label() }}
+    </label>
+  }
+
+  <div class="fb-input-wrap flex items-center gap-3 rounded-xl bg-input px-3.5 py-3 transition-[box-shadow,background-color]"
+       [class]="wrapClasses()"
+       [class.fb-input-wrap--error]="hasError()">
+
+    @if (icon()) {
+      <span class="fb-icon flex shrink-0 transition-colors"
+            [class]="iconClasses()"
+            aria-hidden="true">
+        <lucide-icon [name]="lucideIconName()!" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+      </span>
+    }
+
+    <input
+      [id]="inputId"
+      [type]="inputType()"
+      [value]="value()"
+      [placeholder]="placeholder()"
+      [autocomplete]="autocomplete()"
+      [attr.aria-invalid]="hasError() || null"
+      [attr.aria-describedby]="errorMessage() ? errorId : null"
+      (input)="onInput($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      class="min-w-0 flex-1 border-none bg-transparent font-[inherit] text-[15px] leading-[1.4] text-foreground placeholder:text-muted-foreground/70 outline-none focus:outline-none"
+    />
+
+    @if (showToggle() && type() === 'password') {
+      <button
+        type="button"
+        (click)="togglePasswordVisibility()"
+        [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+        class="fb-toggle flex shrink-0 cursor-pointer border-none bg-transparent p-0 leading-none text-muted-foreground/70 transition-colors hover:text-muted-foreground"
+        tabindex="-1">
+        @if (showPassword()) {
+          <lucide-icon name="eye-off" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+        } @else {
+          <lucide-icon name="eye" [size]="16" [strokeWidth]="2" aria-hidden="true" />
+        }
+      </button>
+    }
+
+  </div>
+
+  @if (errorMessage()) {
+    <span [id]="errorId" role="alert" class="fb-error mt-1 text-xs text-destructive-text">{{ errorMessage() }}</span>
+  }
+</div>

@@ -1,0 +1,63 @@
+<div class="flex items-center">
+  <ng-content select="[fbAccordionPrefix]" />
+
+  <button
+    type="button"
+    class="peer flex items-center flex-1 min-w-0 px-5 max-md:px-3 py-3.5 bg-transparent border-0 cursor-pointer text-left"
+    (click)="toggle()"
+    [attr.aria-expanded]="open()"
+    [attr.aria-controls]="bodyId"
+    [id]="triggerId">
+    <div class="flex items-center gap-3 min-w-0">
+      @if (icon()) {
+        <span
+          class="size-[42px] rounded-[10px] bg-lavender flex items-center justify-center shrink-0 text-foreground"
+          aria-hidden="true">
+          <lucide-icon [name]="icon()!" [size]="18" [strokeWidth]="2" />
+        </span>
+      }
+      <span class="text-base font-semibold text-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+        {{ label() }}
+      </span>
+      @if (count() !== undefined && count()! > 0) {
+        <span
+          class="text-[11px] text-[color-mix(in_oklch,_var(--color-muted-foreground)_70%,_transparent)] bg-input px-[7px] py-px rounded-full shrink-0"
+          aria-hidden="true">{{ count() }}</span>
+      }
+    </div>
+  </button>
+
+  <ng-content select="[fbAccordionSuffix]" />
+
+  <span
+    data-testid="accordion-chevron"
+    class="shrink-0 inline-flex items-center justify-center size-[42px] max-md:size-11 text-muted-foreground transition-[background-color] duration-[120ms] hover:bg-muted peer-hover:bg-muted mr-2 max-md:mr-1"
+    [style.border-radius]="roundChevron() ? '50%' : '10px'"
+    aria-hidden="true"
+    (click)="toggle()">
+    <svg
+      class="size-[18px] block transition-transform duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+      [class.rotate-90]="open()"
+      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  </span>
+</div>
+
+<div
+  #body
+  class="grid transition-[grid-template-rows] duration-[350ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+  [style.grid-template-rows]="open() ? '1fr' : '0fr'"
+  [inert]="!open()"
+  [id]="bodyId"
+  role="region"
+  [attr.aria-labelledby]="triggerId">
+  <div class="overflow-hidden">
+    <!-- #425 — a list entry nests two of these bodies, so px-5 was charged
+         twice (80px) on a phone. Below md each level pays px-3 instead. -->
+    <div class="pt-3 px-5 max-md:px-3 pb-5">
+      <ng-content />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<button
+  type="button"
+  aria-label="Resume language"
+  aria-haspopup="menu"
+  [attr.aria-expanded]="open()"
+  class="flex size-9 max-md:size-11 items-center justify-center overflow-hidden ring-1 ring-inset ring-line cursor-pointer transition-[border-radius] duration-200 ease-out hover:rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+  [class.rounded-full]="!open()"
+  [class.rounded-xl]="open()"
+  [class.bg-muted]="!selected()"
+  (click)="toggle()">
+  @if (selected(); as language) {
+    <img
+      [src]="'/flags/' + language.country + '.svg'"
+      [alt]="language.name + ' flag'"
+      width="36"
+      height="36"
+      class="size-full object-cover" />
+  } @else {
+    <lucide-icon name="globe" [size]="20" [strokeWidth]="2" class="text-foreground" aria-hidden="true" />
+  }
+</button>
+
+<!-- Frosted-glass dropdown — placement() decides which edge it flies out from -->
+<ul
+  class="glass-surface lang-menu absolute z-20 min-w-[168px] list-none py-2 rounded-xl"
+  [class.lang-menu--left]="placement() === 'left'"
+  [class.lang-menu--top]="placement() === 'top'"
+  [class.open]="open()"
+  role="menu"
+  aria-label="Resume language">
+  @for (language of languages; track language.locale) {
+    <li class="px-2" role="none">
+      <button
+        type="button"
+        role="menuitemradio"
+        [attr.aria-checked]="store.localization() === language.locale"
+        class="flex w-full items-center gap-3 px-3 py-2 rounded-full text-left text-sm text-foreground cursor-pointer transition-colors hover:bg-brand-yellow hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        (click)="select(language.locale)">
+        <img
+          [src]="'/flags/' + language.country + '.svg'"
+          alt=""
+          width="20"
+          height="20"
+          aria-hidden="true"
+          class="size-5 shrink-0 rounded-full ring-1 ring-line" />
+        {{ language.name }}
+        @if (store.localization() === language.locale) {
+          <lucide-icon name="circle-check" [size]="15" [strokeWidth]="2" class="ml-auto shrink-0" aria-hidden="true" />
+        }
+      </button>
+    </li>
+  }
+</ul>

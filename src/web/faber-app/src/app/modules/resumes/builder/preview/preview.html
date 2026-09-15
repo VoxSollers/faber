@@ -1,0 +1,150 @@
+<!-- Preview card — fills its half of the row (50/50 with the editor), same
+     rounded corners as the editor. The PDF fills this card's width; taller
+     pages scroll vertically with the scrollbar hidden. Once the half-share
+     would get narrower than a perfect height-fit, the card locks to the page's
+     aspect ratio (see Preview.lockCardWidth) and stays static — the editor
+     takes the freed width instead of the page shrinking. -->
+<div class="relative h-full w-full bg-card border-[0.5px] border-line rounded-2xl overflow-hidden">
+
+  <!-- One persistent live region for the first-load skeleton (#456 §1), mirroring
+       BuilderActions's save-status announcement (builder-actions.html). It never
+       leaves the DOM — only its text changes — so it reliably announces the
+       "now generating" transition; a region that instead enters the DOM already
+       containing its text, as an `@if`-scoped span would, is never observed by a
+       screen reader in the first place. -->
+  <span class="sr-only" role="status" aria-live="polite">{{ previewAnnouncement() }}</span>
+
+  @if (store.isLoading()) {
+    <div class="absolute inset-0 flex items-center justify-center" aria-label="Loading preview" aria-live="polite">
+      <span class="block size-8 rounded-full border-[3px] border-line border-t-primary animate-spin"></span>
+    </div>
+  } @else if (store.preview()) {
+
+    <!-- Scroll viewport — page fills width, scrollbar hidden. Vertical scroll is
+         disabled while the card is static (locked to the page), so sub-pixel
+         overflow can't nudge it; taller pages still scroll. -->
+    <div
+      #paper
+      class="no-scrollbar absolute inset-0 overflow-x-hidden"
+      [class.overflow-y-auto]="scrollable()"
+      [class.overflow-y-hidden]="!scrollable()">
+      <!-- The wrapper — not either canvas below — owns #paper's scroll extent
+           (see Preview.renderCurrentPage). Its size is set directly in code
+           to the rendered CSS page size; each canvas keeps its own explicit
+           width/height so resizing this wrapper can never visually squash
+           whichever frame is currently on screen. -->
+      <div #frame class="relative">
+        <canvas
+          #canvasA
+          class="fb-preview-buffer absolute inset-0 block"
+          [class.fb-preview-buffer-front]="frontBuffer() === 'a'"
+          [attr.role]="frontBuffer() === 'a' ? 'img' : null"
+          [attr.aria-label]="frontBuffer() === 'a' ? 'Resume preview' : null"
+          [attr.aria-hidden]="frontBuffer() === 'a' ? null : true"></canvas>
+        <canvas
+          #canvasB
+          class="fb-preview-buffer absolute inset-0 block"
+          [class.fb-preview-buffer-front]="frontBuffer() === 'b'"
+          [attr.role]="frontBuffer() === 'b' ? 'img' : null"
+          [attr.aria-label]="frontBuffer() === 'b' ? 'Resume preview' : null"
+          [attr.aria-hidden]="frontBuffer() === 'b' ? null : true"></canvas>
+      </div>
+    </div>
+
+    <!-- Floating bottom page navigation — overlaid on top of the preview -->
+    <div
+      class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 py-[5px] px-2 glass-surface rounded-full"
+      role="group"
+      aria-label="Page navigation">
+      <button
+        type="button"
+        class="size-[26px] rounded-full border-0 bg-transparent flex items-center justify-center cursor-pointer text-base leading-none text-muted-foreground dark:text-foreground transition-[background-color,color] duration-[120ms] hover:enabled:bg-foreground/10 dark:hover:enabled:bg-muted hover:enabled:text-foreground disabled:opacity-35 disabled:cursor-not-allowed"
+        [disabled]="currentPage() <= 1"
+        aria-label="Previous page"
+        (click)="prev()">
+        <lucide-icon name="chevron-left" [size]="16" [strokeWidth]="2.2" aria-hidden="true" />
+      </button>
+      <span class="text-xs font-semibold text-foreground min-w-[40px] text-center" aria-live="polite">{{ currentPage() }} / {{ totalPages() }}</span>
+      <button
+        type="button"
+        class="size-[26px] rounded-full border-0 bg-transparent flex items-center justify-center cursor-pointer text-base leading-none text-muted-foreground dark:text-foreground transition-[background-color,color] duration-[120ms] hover:enabled:bg-foreground/10 dark:hover:enabled:bg-muted hover:enabled:text-foreground disabled:opacity-35 disabled:cursor-not-allowed"
+        [disabled]="currentPage() >= totalPages()"
+        aria-label="Next page"
+        (click)="next()">
+        <lucide-icon name="chevron-right" [size]="16" [strokeWidth]="2.2" aria-hidden="true" />
+      </button>
+    </div>
+
+    <!-- Keep the first-load placeholder over the mounted canvases until PDF.js
+         has painted and promoted the first real frame. -->
+    @if (!store.hasRenderedPreview()) {
+      <div
+        class="fb-preview-skeleton absolute inset-0 z-20 h-full w-full overflow-hidden bg-card p-8 max-sm:p-6"
+        aria-hidden="true">
+        <div class="fb-preview-skeleton-line h-6 w-3/5 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-3 h-3 w-1/3 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-2 h-2.5 w-1/2 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-10 h-4 w-1/4 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-4 h-3 w-full rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-2 h-3 w-11/12 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-2 h-3 w-3/4 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-8 h-4 w-1/3 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-4 h-3 w-5/6 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-2 h-3 w-2/3 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-2 h-3 w-3/4 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-8 h-4 w-1/5 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-4 h-3 w-4/5 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-2 h-3 w-1/2 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-2 h-3 w-3/5 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-8 h-4 w-1/4 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-4 h-3 w-full rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-2 h-3 w-5/6 rounded bg-muted"></div>
+        <div class="fb-preview-skeleton-line mt-2 h-3 w-2/3 rounded bg-muted"></div>
+      </div>
+    }
+
+  } @else if (store.previewStatus() === 'generating' && !store.preview()) {
+
+    <!-- First-load skeleton before a PDF blob has arrived. Once the blob exists, the matching
+         overlay in the canvas branch above keeps it covered until PDF.js promotes the frame.
+         Like the eventual canvas it starts
+         at the top and fills the preview width; the card clips everything below its
+         viewport instead of shrinking a complete A4 silhouette into view. A regeneration
+         after an edit keeps the canvas branch above and can never flash back to this one.
+         The persistent live region carries the state for screen readers; the skeleton
+         itself is decorative. -->
+    <div
+      class="fb-preview-skeleton absolute inset-0 h-full w-full overflow-hidden bg-card p-8 max-sm:p-6"
+      aria-hidden="true">
+      <div class="fb-preview-skeleton-line h-6 w-3/5 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-3 h-3 w-1/3 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-2 h-2.5 w-1/2 rounded bg-muted"></div>
+
+      <div class="fb-preview-skeleton-line mt-10 h-4 w-1/4 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-4 h-3 w-full rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-2 h-3 w-11/12 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-2 h-3 w-3/4 rounded bg-muted"></div>
+
+      <div class="fb-preview-skeleton-line mt-8 h-4 w-1/3 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-4 h-3 w-5/6 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-2 h-3 w-2/3 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-2 h-3 w-3/4 rounded bg-muted"></div>
+
+      <div class="fb-preview-skeleton-line mt-8 h-4 w-1/5 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-4 h-3 w-4/5 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-2 h-3 w-1/2 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-2 h-3 w-3/5 rounded bg-muted"></div>
+
+      <div class="fb-preview-skeleton-line mt-8 h-4 w-1/4 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-4 h-3 w-full rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-2 h-3 w-5/6 rounded bg-muted"></div>
+      <div class="fb-preview-skeleton-line mt-2 h-3 w-2/3 rounded bg-muted"></div>
+    </div>
+
+  } @else {
+    <div class="absolute inset-0 flex items-center justify-center text-[color-mix(in_oklch,_var(--color-muted-foreground)_70%,_transparent)] text-sm">
+      No preview available
+    </div>
+  }
+
+</div>

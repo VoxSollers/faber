@@ -1,0 +1,20 @@
+using FastEndpoints;
+using FluentValidation;
+
+namespace Faber.Modules.Resumes.Application.Features.Skills.CreateSkill;
+
+public class CreateSkillValidator : Validator<CreateSkillRequest>
+{
+    private static readonly string[] ValidLevels = ["Beginner", "Intermediate", "Advanced", "Expert"];
+
+    public CreateSkillValidator()
+    {
+        RuleFor(x => x.Name)
+            .MaximumLength(100).WithMessage("'Name' must not exceed 100 characters.");
+
+        RuleFor(x => x.Level)
+            .Must(level => ValidLevels.Contains(level!))
+            .WithMessage($"'Level' must be one of: {string.Join(", ", ValidLevels)}.")
+            .When(x => !string.IsNullOrWhiteSpace(x.Level));
+    }
+}

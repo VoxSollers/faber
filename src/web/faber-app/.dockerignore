@@ -1,0 +1,14 @@
+# Build context is src/web/faber-app, so the repo-root .dockerignore does not
+# apply here. Keep this list in step with src/web/faber-app/.gitignore.
+node_modules
+dist
+.angular
+.git
+.gitignore
+.vscode
+.editorconfig
+.prettierrc
+README.md
+design.pen
+Dockerfile
+.dockerignore

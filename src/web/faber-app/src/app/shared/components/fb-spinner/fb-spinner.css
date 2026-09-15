@@ -1,0 +1,35 @@
+.fb-spinner-morph {
+  animation: fb-morph-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes fb-morph-pulse {
+  0% {
+    border-radius: 50%;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    border-radius: 25%;
+    transform: scale(0.82) rotate(180deg);
+  }
+  100% {
+    border-radius: 50%;
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-spinner-morph {
+    animation: fb-morph-pulse-soft 2s ease-in-out infinite;
+  }
+
+  @keyframes fb-morph-pulse-soft {
+    0%, 100% {
+      border-radius: 50%;
+      opacity: 1;
+    }
+    50% {
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+  }
+}

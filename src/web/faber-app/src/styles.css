@@ -1,0 +1,478 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--color-bg);
+  background-size: .9rem .9rem;
+  /* Smooth the light/dark swap. The pre-paint guard in index.html sets the
+     final theme before first paint, so no transition fires on initial load. */
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  body {
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--color-dot) 40%, transparent) .9px, transparent .9px);
+  }
+}
+
+@theme {
+  /* Brand */
+  --color-primary: oklch(78.4% 0.16 80);
+  --color-primary-foreground: oklch(14.5% 0.02 264);
+
+  /* Semantic */
+  --color-background: oklch(93% 0 0);
+  --color-foreground: oklch(14.5% 0.025 264);
+  --color-card: oklch(98.5% 0 0);
+  --color-card-foreground: oklch(14.5% 0.025 264);
+  --color-muted: oklch(93% 0.01 264);
+  --color-muted-foreground: oklch(46% 0.02 264);
+  --color-surface: oklch(90% 0.01 264);
+  --color-accent: oklch(93% 0.01 264);
+  --color-accent-foreground: oklch(14.5% 0.025 264);
+  --color-line: oklch(90% 0.01 264);
+  --color-input: oklch(93% 0.01 264);
+  --color-ring: oklch(60% 0.18 250);
+  --color-destructive: oklch(58% 0.22 27);
+  --color-destructive-foreground: oklch(98% 0.01 264);
+  /* Opaque soft-destructive button fills (#370) — alpha fills (destructive/10)
+     read as plain gray over dark cards, so each theme gets its own opaque
+     value; see the .dark block for the dark pair and contrast.spec.ts guards. */
+  --color-destructive-soft: oklch(94.5% 0.03 25);
+  --color-destructive-soft-hover: oklch(91% 0.05 25);
+  --color-destructive-hover: oklch(52% 0.20 27);
+  --color-success: oklch(56% 0.13 160);
+  --color-warning: oklch(64% 0.14 75);
+  --color-info: oklch(57% 0.15 230);
+
+  /* Status text tokens — tuned for WCAG AA as text on neutral surfaces
+     (card/input/glass/page). The fill tokens above stay tuned for white-on-fill
+     (e.g. the solid destructive button); see contrast.spec.ts for the guard. */
+  --color-destructive-text: oklch(47% 0.20 27);
+  --color-success-text: oklch(45% 0.13 160);
+  --color-warning-text: oklch(48% 0.14 75);
+  --color-info-text: oklch(45% 0.15 230);
+  --color-dot: oklch(80% 0 0);
+  --color-bg: oklch(93% 0 0);
+
+  /* Glass surface */
+  --color-glass: oklch(100% 0 0 / 0.46);
+  --color-glass-border: oklch(100% 0 0 / 0.3);
+
+  /* Decorative — hero blobs */
+  --color-blob-1-from: #bfdbfe;
+  --color-blob-1-to: #e9d5ff;
+  --color-blob-2-from: #e9d5ff;
+  --color-blob-2-to: #fbcfe8;
+  --color-blob-3-from: #dbeafe;
+  --color-blob-3-to: #cffafe;
+
+  /* Typography */
+  /* Body text and Angular Material UI — Nunito Sans variable (wght 300–700) */
+  --font-sans: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+  /* Navbar brand/logo name only — Space Grotesk variable (wght 600–700) */
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  /* Editorial headings, resume names, dialog titles — Playfair Display variable (wght 700–900) */
+  --font-serif: 'Playfair Display', ui-serif, Georgia, serif;
+
+  /* Builder brand accent tokens */
+  --color-brand-yellow: #F5B400;
+  --color-lavender: #E8EBF4;
+  --font-brand-serif: 'DM Serif Display', ui-serif, Georgia, serif;
+
+  /* Custom font sizes */
+  --text-2xs: 0.72rem;
+  --text-3xs: 0.65rem;
+
+  /* Radii */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-spin-slow: spin 1.5s linear infinite;
+  --animate-underline-in: underline-in 0.15s ease-out;
+
+  @keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes underline-in { from { opacity: 0; transform: scaleX(0) } to { opacity: 1; transform: scaleX(1) } }
+}
+
+.dark {
+  --color-background: oklch(22% 0 0);
+  --color-foreground: oklch(98% 0.01 264);
+  --color-card: oklch(31% 0 0);
+  --color-card-foreground: oklch(98% 0.01 264);
+  --color-muted: oklch(35.5% 0 0);
+  --color-muted-foreground: oklch(70% 0 0);
+  --color-surface: oklch(38% 0 0);
+  --color-accent: oklch(35.5% 0 0);
+  --color-accent-foreground: oklch(98% 0.01 264);
+  --color-line: oklch(38% 0 0);
+  --color-input: oklch(24.5% 0 0);
+  --color-destructive: oklch(50% 0.18 27);
+  --color-destructive-soft: oklch(37% 0.11 27);
+  --color-destructive-soft-hover: oklch(32% 0.12 27);
+  --color-destructive-hover: oklch(45% 0.17 27);
+  /* Lighter status text on dark surfaces — fill tokens above are not overridden
+     in dark mode, so the -text tokens carry the dark-mode contrast fix. */
+  --color-destructive-text: oklch(77% 0.16 27);
+  --color-success-text: oklch(68% 0.13 160);
+  --color-warning-text: oklch(70% 0.14 75);
+  --color-info-text: oklch(68% 0.15 230);
+  --color-glass: oklch(27.5% 0 0 / 0.55);
+  --color-glass-border: oklch(98% 0 0 / 0.12);
+  --color-bg: oklch(22% 0 0);
+  /* #405 — the section-rail icon chip. It is a neutral surface, not an accent,
+     and it deliberately carries the same fill as the chevron's hover state
+     (--color-muted) sitting beside it in the same row. Light mode already does
+     this: #E8EBF4 measures 1.03 against its --color-muted #E4E8EF. Dark mode
+     matches exactly rather than approximately, since the dark ramp is
+     achromatic and has no tint to mirror. Lifts 1.19 off card; icon at 10.5:1.
+     Keep this in step with --color-muted if that token ever moves. */
+  --color-lavender: oklch(35.5% 0 0);
+  --color-dot: oklch(38% 0 0);
+}
+
+:root {
+  --navbar-height: 4.5rem;
+
+  /* Frosted-glass recipe (#371) — single source of truth, consumed by
+     .glass-surface below and the navbar shell (app-navbar.css). Plain :root
+     (not @theme): these are recipe values, not utility-generating tokens. */
+  --glass-blur: 9px;
+  --glass-saturate: 130%;
+  --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  --glass-shadow: 0 8px 24px rgb(0 0 0 / 0.1);
+  --glass-highlight: rgb(255 255 255 / 0.8);
+  --glass-highlight-soft: rgb(255 255 255 / 0.3);
+}
+
+/* Dark glass: deeper drop shadow, dimmer refraction so the rim doesn't read
+   as a harsh white edge. */
+.dark {
+  --glass-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
+  --glass-highlight: rgb(255 255 255 / 0.25);
+  --glass-highlight-soft: rgb(255 255 255 / 0.08);
+}
+
+/*
+ * Shared frosted-glass surface (#371). Lives in @layer components so Tailwind
+ * utilities still win — fb-toast overrides the background with tinted bg-*\/10
+ * variants.
+ *
+ * No border by design (#408): the solid 1px ring read as heavy, so edge
+ * definition comes from --glass-shadow plus the ::after refraction rim alone.
+ * --color-glass-border survives only for the navbar shell's bottom edge
+ * (app-navbar.css); do not reintroduce it here.
+ */
+@layer components {
+  .glass-surface {
+    position: relative;
+    background: var(--color-glass);
+    box-shadow: var(--glass-shadow);
+    -webkit-backdrop-filter: var(--glass-filter);
+    backdrop-filter: var(--glass-filter);
+  }
+
+  /* Refraction rim: a 1px ring hugging the full rounded perimeter — brightest
+     along the top edge (light from above), wrapping the corners and fading
+     down the sides. Replaces the old straight-line ::before/::after edge
+     highlights and the inset box-shadow highlights. */
+  .glass-surface::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      var(--glass-highlight),
+      var(--glass-highlight-soft) 40%,
+      transparent 75%,
+      var(--glass-highlight-soft)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+}
+
+/*
+ * The date-picker overlay needs the same glass recipe but CANNOT join the
+ * layered rule above: Angular Material injects unlayered styles for
+ * .mat-datepicker-content (background-color, box-shadow), and unlayered CSS
+ * always beats @layer components. This unlayered twin out-specifies Material
+ * instead. Material owns the element (panelClass lands on the inner
+ * mat-calendar), so it can't carry the .glass-surface class itself.
+ * Keep these declarations in lockstep with .glass-surface above.
+ */
+.mat-datepicker-content:has(.fb-date-picker-panel) {
+  position: relative;
+  background: var(--color-glass);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+.mat-datepicker-content:has(.fb-date-picker-panel)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    var(--glass-highlight),
+    var(--glass-highlight-soft) 40%,
+    transparent 75%,
+    var(--glass-highlight-soft)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.dotted-background {
+  background-color: var(--color-bg);
+  background-size: 0.9rem 0.9rem;
+  transition: background-color 150ms ease;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .dotted-background {
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--color-dot) 40%, transparent) .9px, transparent .9px);
+  }
+}
+
+.builder-canvas {
+  background-color: var(--color-bg);
+  background-size: 0.9rem 0.9rem;
+  transition: background-color 150ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .dotted-background,
+  .builder-canvas {
+    transition: none;
+  }
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .builder-canvas {
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--color-dot) 40%, transparent) .9px, transparent .9px);
+  }
+}
+
+.fb-dialog-panel {
+  outline: none;
+}
+
+.fb-dialog-backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+/* Bottom-sheet panel for the builder's mobile section navigation (#425).
+   `.cdk-global-overlay-wrapper` is a row-direction flex container, so
+   `align-self` controls the vertical edge: `flex-end` overrides the dialog's
+   default centring and pins the sheet to the bottom with no custom position
+   strategy. */
+.fb-sheet-panel {
+  outline: none;
+  width: 100%;
+  max-width: 100%;
+  align-self: flex-end;
+}
+
+@keyframes fb-toast-enter {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fb-toast-leave {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(16px); }
+}
+
+.fb-toast-enter { animation: fb-toast-enter 200ms ease both; }
+.fb-toast-leave { animation: fb-toast-leave 200ms ease both; }
+
+/*
+ * fb-theme-toggle icon swap: moon enters from the top / leaves upward;
+ * sun enters from the bottom / leaves downward. Mirrors the fb-toast
+ * animate.enter/animate.leave pattern above, with a bouncier entrance
+ * (overshoot easing + scale pop) for a more expressive swap.
+ */
+@keyframes theme-icon-sun-enter {
+  from { opacity: 0; transform: translateY(18px) scale(0.6); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes theme-icon-sun-leave {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(18px) scale(0.6); }
+}
+
+@keyframes theme-icon-moon-enter {
+  from { opacity: 0; transform: translateY(-18px) scale(0.6); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes theme-icon-moon-leave {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-18px) scale(0.6); }
+}
+
+.theme-icon-sun-enter  { animation: theme-icon-sun-enter 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.theme-icon-sun-leave  { animation: theme-icon-sun-leave 220ms cubic-bezier(0.4, 0, 1, 1) both; }
+.theme-icon-moon-enter { animation: theme-icon-moon-enter 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.theme-icon-moon-leave { animation: theme-icon-moon-leave 220ms cubic-bezier(0.4, 0, 1, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-underline-in {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon-sun-enter,
+  .theme-icon-sun-leave,
+  .theme-icon-moon-enter,
+  .theme-icon-moon-leave {
+    animation: none;
+  }
+}
+
+/*
+ * fb-date-picker calendar overlay (rendered in a CDK overlay, outside the
+ * component view — must be styled globally). Drop only the expanding click
+ * ripple on the header buttons (left = period/view switcher, right =
+ * previous/next navigation); the hover/focus state-layer background stays.
+ */
+.fb-date-picker-panel .mat-calendar-controls .mat-ripple-element {
+  display: none;
+}
+
+/* period button (left, view switcher): denser, brand-tinted hover */
+.fb-date-picker-panel .mat-calendar-period-button {
+  --mat-button-text-state-layer-color: var(--color-primary);
+  --mat-button-text-hover-state-layer-opacity: 0.22;
+}
+
+/* Frosted-glass calendar surface: see the .mat-datepicker-content twin of .glass-surface above. */
+
+/*
+ * Material fixes the popup calendar to 354px (sized for the day grid). Our
+ * month-precision pickers only ever show the shorter year / multi-year views,
+ * leaving a big empty band below the grid — let the calendar shrink-wrap instead.
+ */
+.mat-datepicker-content:has(.fb-date-picker-panel) .mat-calendar {
+  height: auto;
+}
+
+/*
+ * Present toggle footer (mat-datepicker-actions): left-aligned and pulled up
+ * tight under the calendar, instead of Material's default right-aligned row.
+ * Keep Material's 8px side padding so the switch lines up with the calendar's
+ * content edges; only flip alignment and shrink the top gap.
+ */
+.mat-datepicker-content:has(.fb-date-picker-panel) .mat-datepicker-actions {
+  justify-content: flex-start;
+  min-height: 0;
+  /* match the calendar's inner inset so the switch lines up with the year
+     columns, not the calendar's outer edge */
+  padding: 8px 28px 14px;
+  margin-top: -4px;
+}
+
+/*
+ * While "Present" is on, the end date is N/A — dim the calendar and block its
+ * clicks. The Present switch lives in the footer (a sibling), so it stays live.
+ */
+.mat-datepicker-content:has(.fb-present-on) .fb-date-picker-panel {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+/*
+ * Pill-shaped Material tooltips. matTooltip is currently used only by the
+ * datepicker's prev/next nav buttons (built into Material's template), so this
+ * effectively scopes to them while staying consistent for any future tooltip.
+ */
+.mat-mdc-tooltip {
+  --mat-tooltip-container-shape: 9999px;
+}
+
+.mat-mdc-tooltip .mat-mdc-tooltip-surface {
+  padding: 5px 12px;
+}
+
+/*
+ * CDK drag-and-drop for the resume builder's orderable lists.
+ * Both the card (preview) and the zone (placeholder) are clones of the dragged
+ * element; hiding the collapsible body [role="region"] makes them render as the
+ * closed element, so they stay consistent regardless of the item's open state.
+ */
+
+/* Карта (preview) — the element itself, collapsed and a touch smaller.
+ * CDK pins an inline height matching the (possibly open) source, so force it
+ * back to auto and let the hidden body collapse the card to header height. */
+.cdk-drag-preview {
+  scale: 0.95;
+  box-sizing: border-box;
+  height: auto !important;
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 0.16);
+  overflow: hidden;
+}
+
+.cdk-drag-preview [role='region'] {
+  display: none;
+}
+
+/* Зона (drop slot) — collapses to the closed-element height; dashed muted hint. */
+.cdk-drag-placeholder {
+  box-sizing: border-box;
+  border: 2px dashed color-mix(in oklch, var(--color-primary) 45%, transparent);
+  border-radius: var(--radius-xl);
+  background: color-mix(in oklch, var(--color-primary) 8%, transparent);
+}
+
+.cdk-drag-placeholder [role='region'] {
+  display: none;
+}
+
+.cdk-drag-placeholder * {
+  visibility: hidden;
+}
+
+/* While a row is actively dragging, collapse its body instantly (no 350ms grid
+ * animation) so the placeholder/boundary settle to the closed size at once. */
+.cdk-drop-list-dragging [role='region'] {
+  transition: none;
+}
+
+/* Smooth settle of the dropped item and reflow of the others. */
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

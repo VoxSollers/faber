@@ -1,0 +1,72 @@
+/*
+ * Save indicator state transitions. During `saving -> saved`, the spinner
+ * stays above the incoming success surface while it turns and contracts. The
+ * circle then settles, the tick follows, and one quiet halo closes the motion.
+ * The overshoot easing matches fb-theme-toggle's icon swap.
+ *
+ * `saving -> error` deliberately avoids that overshoot pop — a plain
+ * decelerating settle-in — so it can never read as a truncated success.
+ */
+
+@keyframes fb-save-spinner-enter {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fb-save-spinner-leave {
+  from { opacity: 1; transform: rotate(0deg) scale(1); }
+  to   { opacity: 0; transform: rotate(240deg) scale(0.35); }
+}
+
+@keyframes fb-save-circle-enter {
+  from { opacity: 0; transform: scale(0.55); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fb-save-tick-enter {
+  from { opacity: 0; transform: rotate(-18deg) scale(0.35); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fb-save-success-halo {
+  from { opacity: 0.4; transform: scale(0.65); }
+  to   { opacity: 0; transform: scale(1.45); }
+}
+
+@keyframes fb-save-error-enter {
+  from { opacity: 0; transform: scale(1.2); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.fb-save-spinner-enter { animation: fb-save-spinner-enter 180ms ease-out both; }
+.fb-save-spinner-leave {
+  z-index: 2;
+  animation: fb-save-spinner-leave 240ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+.fb-save-circle-enter {
+  animation: fb-save-circle-enter 300ms cubic-bezier(0.34, 1.56, 0.64, 1) 70ms both;
+}
+.fb-save-circle-enter::after {
+  position: absolute;
+  inset: 2px;
+  border: 1px solid currentColor;
+  border-radius: 9999px;
+  content: '';
+  pointer-events: none;
+  animation: fb-save-success-halo 420ms ease-out 170ms both;
+}
+.fb-save-tick-enter {
+  animation: fb-save-tick-enter 280ms cubic-bezier(0.34, 1.56, 0.64, 1) 130ms both;
+}
+.fb-save-error-enter   { animation: fb-save-error-enter 260ms cubic-bezier(0, 0, 0.2, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-save-spinner-enter,
+  .fb-save-spinner-leave,
+  .fb-save-circle-enter,
+  .fb-save-circle-enter::after,
+  .fb-save-tick-enter,
+  .fb-save-error-enter {
+    animation: none;
+  }
+}

@@ -1,0 +1,60 @@
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  opacity: 0.4;
+  filter: blur(64px);
+}
+
+.blob-1 {
+  width: 500px;
+  height: 500px;
+  top: -8rem;
+  right: -6rem;
+  background: linear-gradient(to bottom right, var(--color-blob-1-from), var(--color-blob-1-to));
+  animation: float-1 14s ease-in-out infinite;
+}
+
+.blob-2 {
+  width: 400px;
+  height: 400px;
+  top: 50%;
+  left: -8rem;
+  background: linear-gradient(to top right, var(--color-blob-2-from), var(--color-blob-2-to));
+  animation: float-2 18s ease-in-out infinite;
+}
+
+.blob-3 {
+  width: 300px;
+  height: 300px;
+  bottom: -4rem;
+  right: 33%;
+  background: linear-gradient(to bottom left, var(--color-blob-3-from), var(--color-blob-3-to));
+  animation: float-3 12s ease-in-out infinite;
+}
+
+@keyframes float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, 30px) scale(1.08); }
+}
+
+@keyframes float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -25px) scale(1.05); }
+}
+
+@keyframes float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-20px, -35px) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    animation: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .blob {
+    opacity: 0.15;
+  }
+}

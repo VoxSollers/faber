@@ -1,0 +1,18 @@
+@switch (size()) {
+  @case ('small') {
+    <div class="inline-block h-4 w-4 border-2 animate-spin rounded-full border-solid border-current border-e-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+         role="status">
+    </div>
+  }
+  @case ('medium') {
+    <div class="fb-spinner-morph inline-block h-10 w-10 bg-current"
+         role="status"
+         aria-label="Loading">
+    </div>
+  }
+  @case ('large') {
+    <div class="inline-block h-12 w-12 border-4 animate-spin rounded-full border-solid border-current border-e-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+         role="status">
+    </div>
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "faber-app",
+      "runtimeExecutable": "ng",
+      "runtimeArgs": ["serve", "--port", "4201"],
+      "port": 4201,
+      "cwd": "src/web/faber-app"
+    },
+    {
+      "name": "faber-app-lan",
+      "runtimeExecutable": "ng",
+      "runtimeArgs": ["serve", "--configuration", "lan", "--port", "4202"],
+      "port": 4202,
+      "cwd": "src/web/faber-app"
+    }
+  ]
+}

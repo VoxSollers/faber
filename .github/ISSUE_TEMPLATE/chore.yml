@@ -1,0 +1,28 @@
+name: Chore
+description: Tooling, CI, config, dependency updates
+title: "chore: "
+labels: ["type:chore", "priority:p3"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - area:auth
+        - area:resumes
+        - area:users
+        - area:identity
+        - area:notifications
+        - area:vault
+        - area:infra
+        - area:ui-shared
+        - area:ux
+        - area:tests-infra
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true

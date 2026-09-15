@@ -1,0 +1,5 @@
+{
+  "appHost": {
+    "path": "src/api/Aspire/Faber.AppHost/Faber.AppHost.csproj"
+  }
+}

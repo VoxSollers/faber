@@ -1,0 +1,1 @@
+../../.agents/rules/frontend-patterns.md

@@ -1,0 +1,88 @@
+# Automated dependency updates.
+#
+# Actions are pinned to commit SHAs in .github/workflows, which is what makes a
+# supply-chain compromise of a tag harmless — but a pin is also a freeze. This
+# file is the other half of that trade: Dependabot proposes the bump, a human
+# reviews the new SHA.
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(infra)"
+    labels: ["type:chore", "priority:p2", "area:infra"]
+
+  - package-ecosystem: npm
+    directory: "/src/web/faber-app"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(ui-shared)"
+    labels: ["type:chore", "priority:p2", "area:ui-shared"]
+    groups:
+      # The Angular packages move together; separate PRs per package produce
+      # version skew that fails the build for no useful signal.
+      angular:
+        patterns: ["@angular/*", "@angular-devkit/*", "angular-eslint"]
+        # Stay on Angular 21 until the planned framework migration. Major
+        # upgrades are deliberately handled with `ng update`, not Dependabot.
+        update-types: ["minor", "patch"]
+      # Everything else that is only a build-time concern, batched so the
+      # toolchain's transitive churn does not drown the queue.
+      dev-dependencies:
+        dependency-type: development
+        # These belong to the Angular group even when they are declared in
+        # devDependencies (for example, @angular/animations and the CLI).
+        exclude-patterns: ["@angular/*", "@angular-devkit/*", "angular-eslint"]
+    ignore:
+      # Keep receiving compatible 21.x fixes while postponing the Angular 22
+      # migration until after the new year.
+      - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@angular-devkit/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "angular-eslint"
+        update-types: ["version-update:semver-major"]
+      # Angular Build 21.x and 22.x currently declare Vitest ^4.0.8 as their
+      # supported peer. Avoid a recurring PR that npm ci cannot resolve.
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+    # Package references live in many projects. Keep the review queue to one
+    # coherent change rather than opening the same update once per .csproj.
+    open-pull-requests-limit: 1
+    commit-message:
+      prefix: "chore(api)"
+    labels: ["type:chore", "priority:p2", "area:infra"]
+    groups:
+      # This solution targets net8.0. Group every regular NuGet update so
+      # matching package families (EF Core, Microsoft.Extensions, and tests)
+      # are upgraded and tested together.
+      all-nuget-dependencies:
+        patterns: ["*"]
+      # Security fixes remain prompt, but are still reviewed as one change.
+      all-nuget-security-updates:
+        applies-to: security-updates
+        patterns: ["*"]
+    ignore:
+      # Major SemVer versions can still support net8.0, so do not block them
+      # wholesale. These package families are exceptions: their next major
+      # release requires a newer .NET target framework or EF Core 10.
+      - dependency-name: "Microsoft.AspNetCore.*"
+        versions: ["[9.0.0,)"]
+      - dependency-name: "Microsoft.EntityFrameworkCore*"
+        versions: ["[10.0.0,)"]
+      - dependency-name: "EFCore.NamingConventions"
+        versions: ["[10.0.0,)"]
+      - dependency-name: "Npgsql.EntityFrameworkCore.PostgreSQL"
+        versions: ["[10.0.0,)"]
+      - dependency-name: "Microsoft.VisualStudio.Web.CodeGeneration.Design"
+        versions: ["[10.0.0,)"]

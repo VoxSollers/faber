@@ -1,0 +1,22 @@
+<fb-accordion class="h-full" role="list" aria-label="Resume sections" [allowMultiple]="true">
+
+  @for (section of sections; track section.id; let isLast = $last) {
+    <fb-accordion-item
+      [id]="'s-' + section.id"
+      role="listitem"
+      [label]="section.label"
+      [icon]="section.icon"
+      [count]="section.count?.()"
+      [open]="isOpen(section.id)"
+      (openChange)="setOpen(section.id, $event)">
+      @if (isOpen(section.id)) {
+        <ng-container [ngComponentOutlet]="section.component" />
+      }
+    </fb-accordion-item>
+
+    @if (!isLast) {
+      <div class="h-px bg-line mx-5 shrink-0" aria-hidden="true"></div>
+    }
+  }
+
+</fb-accordion>

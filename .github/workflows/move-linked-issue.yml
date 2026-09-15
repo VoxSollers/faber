@@ -1,0 +1,118 @@
+name: Move Linked Issue on PR State Change
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, reopened, closed]
+
+permissions: {}
+
+jobs:
+  # Forks and Dependabot pull requests cannot access repository secrets.
+  move:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+          script: |
+            // Derived from the event, not hardcoded: a GraphQL user(login:) lookup does not
+            // follow account renames the way repository URLs do, so a literal login here
+            // breaks every one of these workflows the next time the account is renamed.
+            const PROJECT_OWNER = context.repo.owner;
+            const PROJECT_NUMBER = 3;
+
+            const action = context.payload.action;
+            const merged = context.payload.pull_request.merged;
+
+            let targetStatus;
+            if (action === 'closed') {
+              targetStatus = merged ? 'Done' : 'In Progress';
+            } else {
+              targetStatus = 'In Review';
+            }
+
+            const projectResult = await github.graphql(`
+              query($login: String!, $number: Int!) {
+                user(login: $login) {
+                  projectV2(number: $number) {
+                    id
+                    field(name: "Status") {
+                      ... on ProjectV2SingleSelectField {
+                        id
+                        options { id name }
+                      }
+                    }
+                  }
+                }
+              }
+            `, { login: PROJECT_OWNER, number: PROJECT_NUMBER });
+
+            const project = projectResult.user.projectV2;
+            const statusField = project.field;
+            const targetOption = statusField.options.find(o => o.name === targetStatus);
+
+            if (!targetOption) {
+              core.setFailed(`Status option "${targetStatus}" not found on project board`);
+              return;
+            }
+
+            const prResult = await github.graphql(`
+              query($owner: String!, $repo: String!, $pr: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $pr) {
+                    closingIssuesReferences(first: 10) {
+                      nodes {
+                        number
+                        projectItems(first: 10) {
+                          nodes {
+                            id
+                            project { id }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pr: context.payload.pull_request.number,
+            });
+
+            const issues = prResult.repository.pullRequest.closingIssuesReferences.nodes;
+
+            if (issues.length === 0) {
+              console.log('No linked issues found — nothing to move.');
+              return;
+            }
+
+            for (const issue of issues) {
+              const item = issue.projectItems.nodes.find(i => i.project.id === project.id);
+
+              if (!item) {
+                console.log(`Issue #${issue.number} is not on the project board — skipping.`);
+                continue;
+              }
+
+              await github.graphql(`
+                mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: $projectId
+                    itemId: $itemId
+                    fieldId: $fieldId
+                    value: { singleSelectOptionId: $optionId }
+                  }) {
+                    projectV2Item { id }
+                  }
+                }
+              `, {
+                projectId: project.id,
+                itemId: item.id,
+                fieldId: statusField.id,
+                optionId: targetOption.id,
+              });
+
+              console.log(`Issue #${issue.number} → "${targetStatus}"`);
+            }

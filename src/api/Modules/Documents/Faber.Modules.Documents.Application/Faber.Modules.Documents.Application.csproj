@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AddRazorSupportForMVC>true</AddRazorSupportForMVC>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.31" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
+        <PackageReference Include="Microsoft.Playwright" Version="1.62.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Faber.Modules.Documents.PublicApi\Faber.Modules.Documents.PublicApi.csproj"/>
+        <ProjectReference Include="..\..\Resumes\Faber.Modules.Resumes.Domain\Faber.Modules.Resumes.Domain.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\TemplateStrings.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>TemplateStrings.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Resources\TemplateStrings.Designer.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>TemplateStrings.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+</Project>

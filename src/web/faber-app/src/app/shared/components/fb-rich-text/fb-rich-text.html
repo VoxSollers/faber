@@ -1,0 +1,105 @@
+<div #bubbleEl
+     role="toolbar"
+     aria-label="Text formatting"
+     (mousedown)="$event.preventDefault()"
+     class="glass-surface bubble-menu flex items-center gap-0.5 rounded-lg px-1.5 py-1">
+
+    <button type="button" aria-label="Bold" [attr.aria-pressed]="activeFormats().bold"
+
+            (click)="toggleBold()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().bold">
+      <lucide-icon name="bold" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+    <button type="button" aria-label="Italic" [attr.aria-pressed]="activeFormats().italic"
+
+            (click)="toggleItalic()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().italic">
+      <lucide-icon name="italic" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+    <button type="button" aria-label="Underline" [attr.aria-pressed]="activeFormats().underline"
+
+            (click)="toggleUnderline()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().underline">
+      <lucide-icon name="underline" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+    <button type="button" aria-label="Strikethrough" [attr.aria-pressed]="activeFormats().strike"
+
+            (click)="toggleStrike()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().strike">
+      <lucide-icon name="strikethrough" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+    <div class="mx-1 h-5 w-px shrink-0 bg-line" aria-hidden="true"></div>
+
+    <button type="button" aria-label="Bullet list" [attr.aria-pressed]="activeFormats().bulletList"
+
+            (click)="toggleBulletList()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().bulletList">
+      <lucide-icon name="list" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+    <button type="button" aria-label="Ordered list" [attr.aria-pressed]="activeFormats().orderedList"
+
+            (click)="toggleOrderedList()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().orderedList">
+      <lucide-icon name="list-ordered" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+    <div class="mx-1 h-5 w-px shrink-0 bg-line" aria-hidden="true"></div>
+
+    <button type="button" aria-label="Align left" [attr.aria-pressed]="activeFormats().alignLeft"
+
+            (click)="setAlignLeft()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().alignLeft">
+      <lucide-icon name="text-align-start" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+    <button type="button" aria-label="Align center" [attr.aria-pressed]="activeFormats().alignCenter"
+
+            (click)="setAlignCenter()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().alignCenter">
+      <lucide-icon name="text-align-center" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+    <button type="button" aria-label="Align right" [attr.aria-pressed]="activeFormats().alignRight"
+
+            (click)="setAlignRight()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().alignRight">
+      <lucide-icon name="text-align-end" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+    <button type="button" aria-label="Align justify" [attr.aria-pressed]="activeFormats().alignJustify"
+
+            (click)="setAlignJustify()"
+            class="tb-btn flex h-7 w-7 items-center justify-center rounded-md text-foreground transition-colors"
+            [class.tb-btn--active]="activeFormats().alignJustify">
+      <lucide-icon name="text-align-justify" [size]="14" [strokeWidth]="2" aria-hidden="true" />
+    </button>
+
+</div>
+
+@if (maxLength() !== undefined) {
+  <div aria-live="polite"
+       class="mb-1 text-right text-xs text-muted-foreground"
+       [class.text-destructive-text]="characterCount() > maxLength()!">
+    {{ characterCount() }} / {{ maxLength() }}
+  </div>
+}
+
+<div class="overflow-hidden rounded-xl bg-input transition-[box-shadow,background-color]"
+     [class.focused]="focused()">
+  <div #editorEl
+       class="min-h-28 px-3.5 py-3 [&_.ProseMirror]:text-foreground [&_.ProseMirror]:outline-none"></div>
+</div>

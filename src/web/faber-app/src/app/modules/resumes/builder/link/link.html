@@ -1,0 +1,21 @@
+<app-orderable-list
+  [items]="store.links()"
+  [hideTitle]="true"
+  title="Links"
+  addLabel="Add link"
+  [titleFn]="linkTitle"
+  (add)="store.addLink()"
+  (delete)="store.deleteLink($event)"
+  (itemDrop)="store.reorderLinks($event)">
+  <ng-template let-item>
+    <form [formGroup]="getForm(item)" class="grid grid-cols-[repeat(auto-fit,minmax(11rem,1fr))] gap-3 py-2">
+      <div
+        class="contents"
+        (focusin)="onTitleFocusIn(item)"
+        (focusout)="onTitleFocusOut(item, $event)">
+        <fb-field label="Label" placeholder="e.g. LinkedIn" formControlName="label" />
+        <fb-field label="URL" type="url" placeholder="https://…" formControlName="uri" />
+      </div>
+    </form>
+  </ng-template>
+</app-orderable-list>

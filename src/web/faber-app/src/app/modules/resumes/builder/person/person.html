@@ -1,0 +1,24 @@
+<form [formGroup]="form" class="grid grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-4">
+
+  <fb-field label="First name" placeholder="John" autocomplete="given-name" formControlName="firstname" />
+  <fb-field label="Last name" placeholder="Doe" autocomplete="family-name" formControlName="lastname" />
+
+  <fb-field label="Job title" placeholder="Software Engineer" formControlName="jobTitle" />
+  <fb-field label="Email" placeholder="john.doe@example.com" type="email" autocomplete="email" formControlName="email" />
+
+  <fb-field label="Phone" placeholder="+1 234 567 8900" type="tel" autocomplete="tel" formControlName="phone" />
+  <fb-field label="Country" placeholder="United States" autocomplete="country-name" formControlName="country" />
+
+  <fb-field label="City" placeholder="New York" autocomplete="address-level2" formControlName="city" />
+  <fb-field label="Street address" placeholder="123 Main St" autocomplete="street-address" formControlName="street" />
+
+  <fb-field label="Post code" placeholder="10001" autocomplete="postal-code" formControlName="postCode" />
+  <fb-field label="Nationality" placeholder="American" formControlName="nationality" />
+
+  <fb-date-picker
+    label="Date of birth"
+    formControlName="dateOfBirth"
+    [locale]="store.localization()" />
+  <fb-field label="Driving license" placeholder="B" formControlName="drivingLicense" />
+
+</form>

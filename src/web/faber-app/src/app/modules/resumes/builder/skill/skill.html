@@ -1,0 +1,20 @@
+<app-orderable-list
+  [items]="store.skills()"
+  [hideTitle]="true"
+  title="Skills"
+  addLabel="Add skill"
+  [titleFn]="skillTitle"
+  (add)="store.addSkill()"
+  (delete)="store.deleteSkill($event)"
+  (itemDrop)="store.reorderSkills($event)">
+  <ng-template let-item>
+    <form [formGroup]="getForm(item)" class="grid grid-cols-[repeat(auto-fit,minmax(11rem,1fr))] gap-3 py-2">
+      <div
+        (focusin)="onTitleFocusIn(item)"
+        (focusout)="onTitleFocusOut(item, $event)">
+        <fb-field label="Skill" placeholder="e.g. Figma" formControlName="name" />
+      </div>
+      <fb-select label="Level" placeholder="Select level" [options]="skillLevels" formControlName="level" />
+    </form>
+  </ng-template>
+</app-orderable-list>

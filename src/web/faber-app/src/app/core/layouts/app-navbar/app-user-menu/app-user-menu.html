@@ -1,0 +1,14 @@
+<div class="flex flex-col px-4 py-3">
+  <span class="text-sm text-foreground">
+    {{ user().firstName }} {{ user().lastName }}
+  </span>
+  <span class="text-sm text-muted-foreground truncate">{{ user().email }}</span>
+</div>
+<ul class="py-2">
+  <li class="px-2">
+    <a [routerLink]="routes.account" (click)="closed.emit()" class="block w-full text-left px-3 py-2 text-sm text-foreground rounded-full transition-colors hover:bg-primary hover:text-primary-foreground">Account</a>
+  </li>
+  <li class="px-2">
+    <button (click)="logout()" class="block w-full text-left px-3 py-2 text-sm text-foreground rounded-full transition-colors hover:bg-primary hover:text-primary-foreground cursor-pointer">Sign out</button>
+  </li>
+</ul>

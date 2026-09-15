@@ -1,0 +1,29 @@
+<div
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="confirm-dialog-title"
+  aria-describedby="confirm-dialog-message"
+  class="rounded-3xl bg-card p-6 shadow-lg w-full max-w-sm">
+  <h2 id="confirm-dialog-title" class="font-serif text-lg font-bold text-foreground">
+    {{ data.title }}
+  </h2>
+  <p id="confirm-dialog-message" class="mt-1 text-sm text-muted-foreground">
+    {{ data.message }}
+  </p>
+  <div class="mt-6 flex justify-end gap-2">
+    <button
+      type="button"
+      data-testid="cancel-btn"
+      fb-button variant="default" size="md"
+      (click)="cancel()">
+      Cancel
+    </button>
+    <button
+      type="button"
+      data-testid="confirm-btn"
+      fb-button variant="destructive" size="md"
+      (click)="confirm()">
+      {{ data.confirmLabel ?? 'Confirm' }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+name: Remove Closed Issue from Project
+
+on:
+  issues:
+    types: [closed]
+
+permissions: {}
+
+jobs:
+  remove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+          script: |
+            // Derived from the event, not hardcoded: a GraphQL user(login:) lookup does not
+            // follow account renames the way repository URLs do, so a literal login here
+            // breaks every one of these workflows the next time the account is renamed.
+            const PROJECT_OWNER = context.repo.owner;
+            const PROJECT_NUMBER = 3;
+
+            const projectResult = await github.graphql(`
+              query($login: String!, $number: Int!) {
+                user(login: $login) {
+                  projectV2(number: $number) {
+                    id
+                  }
+                }
+              }
+            `, { login: PROJECT_OWNER, number: PROJECT_NUMBER });
+
+            const projectId = projectResult.user.projectV2.id;
+
+            const issueResult = await github.graphql(`
+              query($owner: String!, $repo: String!, $issue: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  issue(number: $issue) {
+                    projectItems(first: 10) {
+                      nodes {
+                        id
+                        project { id }
+                      }
+                    }
+                  }
+                }
+              }
+            `, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue: context.payload.issue.number,
+            });
+
+            const item = issueResult.repository.issue.projectItems.nodes
+              .find(i => i.project.id === projectId);
+
+            if (!item) {
+              console.log(`Issue #${context.payload.issue.number} is not on the project board — nothing to remove.`);
+              return;
+            }
+
+            await github.graphql(`
+              mutation($projectId: ID!, $itemId: ID!) {
+                deleteProjectV2Item(input: {
+                  projectId: $projectId
+                  itemId: $itemId
+                }) {
+                  deletedItemId
+                }
+              }
+            `, {
+              projectId: projectId,
+              itemId: item.id,
+            });
+
+            console.log(`Issue #${context.payload.issue.number} removed from project board.`);

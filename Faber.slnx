@@ -1,0 +1,93 @@
+<Solution>
+  <Folder Name="/infra/" />
+  <Folder Name="/infra/keycloak/">
+    <File Path="infra\keycloak\realm-export.json" />
+  </Folder>
+  <Folder Name="/infra/vault/">
+    <File Path="infra\vault\config\config.hcl" />
+  </Folder>
+  <Folder Name="/manage/">
+    <File Path="CLAUDE.md" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/api/">
+    <Project Path="src\api\Faber.Api\Faber.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Aspire/">
+    <Project Path="src\api\Aspire\Faber.AppHost\Faber.AppHost.csproj" />
+    <Project Path="src\api\Aspire\Faber.ServiceDefaults\Faber.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Jobs/">
+    <Project Path="src/api/Jobs/Faber.Bootstrap/Faber.Bootstrap.csproj" />
+    <Project Path="src/api/Jobs/Faber.Migrations/Faber.Migrations.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Modules/" />
+  <Folder Name="/src/api/Modules/Auth/">
+    <Project Path="src/api/Modules/Auth/Faber.Modules.Auth.PublicApi/Faber.Modules.Auth.PublicApi.csproj" />
+    <Project Path="src\api\Modules\Auth\Faber.Modules.Auth.Application\Faber.Modules.Auth.Application.csproj" />
+    <Project Path="src\api\Modules\Auth\Faber.Modules.Auth.Domain\Faber.Modules.Auth.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Modules/Common/">
+    <Project Path="src\api\Modules\Common\Faber.Modules.Common.PublicApi\Faber.Modules.Common.PublicApi.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Modules/Identity/">
+    <Project Path="src\api\Modules\Identity\Faber.Modules.Identity.Application\Faber.Modules.Identity.Application.csproj" />
+    <Project Path="src\api\Modules\Identity\Faber.Modules.Identity.Domain\Faber.Modules.Identity.Domain.csproj" />
+    <Project Path="src\api\Modules\Identity\Faber.Modules.Identity.Infrastructure\Faber.Modules.Identity.Infrastructure.csproj" />
+    <Project Path="src\api\Modules\Identity\Faber.Modules.Identity.PublicApi\Faber.Modules.Identity.PublicApi.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Modules/Notifications/">
+    <Project Path="src\api\Modules\Notifications\Faber.Modules.Notifications.Application\Faber.Modules.Notifications.Application.csproj" />
+    <Project Path="src\api\Modules\Notifications\Faber.Modules.Notifications.PublicApi\Faber.Modules.Notifications.PublicApi.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Modules/Resumes/">
+    <Project Path="src/api/Modules/Resumes/Faber.Modules.Resumes.Application/Faber.Modules.Resumes.Application.csproj" />
+    <Project Path="src/api/Modules/Resumes/Faber.Modules.Resumes.Domain/Faber.Modules.Resumes.Domain.csproj" />
+    <Project Path="src/api/Modules/Resumes/Faber.Modules.Resumes.Infrastructure/Faber.Modules.Resumes.Infrastructure.csproj" />
+    <Project Path="src/api/Modules/Resumes/Faber.Modules.Resumes.PublicApi/Faber.Modules.Resumes.PublicApi.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Modules/Users/">
+    <Project Path="src\api\Modules\Users\Faber.Modules.Users.Application\Faber.Modules.Users.Application.csproj" />
+    <Project Path="src\api\Modules\Users\Faber.Modules.Users.Domain\Faber.Modules.Users.Domain.csproj" />
+    <Project Path="src\api\Modules\Users\Faber.Modules.Users.PublicApi\Faber.Modules.Users.PublicApi.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Modules/Vault/">
+    <Project Path="src\api\Modules\Vault\Faber.Modules.Vault.Application\Faber.Modules.Vault.Application.csproj" />
+    <Project Path="src\api\Modules\Vault\Faber.Modules.Vault.PublicApi\Faber.Modules.Vault.PublicApi.csproj" />
+  </Folder>
+  <Folder Name="/src/api/Modules/Documents/">
+    <Project Path="src\api\Modules\Documents\Faber.Modules.Documents.Application\Faber.Modules.Documents.Application.csproj" />
+    <Project Path="src\api\Modules\Documents\Faber.Modules.Documents.PublicApi\Faber.Modules.Documents.PublicApi.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Integration/">
+    <Project Path="tests/Integration/Faber.AppHost.Tests/Faber.AppHost.Tests.csproj" />
+    <Project Path="tests/Integration/Faber.Bootstrap.Tests/Faber.Bootstrap.Tests.csproj" />
+    <Project Path="tests\Integration\Faber.Api.Tests\Faber.Api.Tests.csproj" />
+    <Project Path="tests/Integration/Faber.Migrations.Tests/Faber.Migrations.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Integration/Modules/" />
+  <Folder Name="/tests/Integration/Modules/Auth/">
+    <Project Path="tests\Integration\Modules\Auth\Faber.Modules.Auth.Application.Tests\Faber.Modules.Auth.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Integration/Modules/Common/">
+    <Project Path="tests/Integration/Modules/Common/Faber.Testing.Shared/Faber.Testing.Shared.csproj" />
+  </Folder>
+  <Folder Name="/tests/Integration/Modules/Resumes/">
+    <Project Path="tests\Integration\Modules\Resumes\Faber.Modules.Resumes.Application.Tests\Faber.Modules.Resumes.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Integration/Modules/Vault/">
+    <Project Path="tests\Integration\Modules\Vault\Faber.Modules.Vault.Application.Tests\Faber.Modules.Vault.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Unit/" />
+  <Folder Name="/tests/Unit/Modules/" />
+  <Folder Name="/tests/Unit/Modules/Notifications/">
+    <Project Path="tests\Unit\Modules\Notifications\Faber.Modules.Notifications.Application.UnitTests\Faber.Modules.Notifications.Application.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Unit/Modules/Resumes/">
+    <Project Path="tests\Unit\Modules\Resumes\Faber.Modules.Resumes.Application.UnitTests\Faber.Modules.Resumes.Application.UnitTests.csproj" />
+  </Folder>
+</Solution>

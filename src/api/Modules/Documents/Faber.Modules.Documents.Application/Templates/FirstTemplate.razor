@@ -1,0 +1,452 @@
+@using System.Globalization
+@using Faber.Modules.Documents.Application.Razor.Extensions
+@using Faber.Modules.Documents.Application.Resources
+@using Faber.Modules.Resumes.Domain.Entities
+@{
+    var textInfo = CultureInfo.CurrentCulture.TextInfo;
+    const string dateIntervalFormat = "MMMM yyyy";
+    const string dateOfBirthFormat = "dd.MM.yyyy";
+    CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(Resume?.Localization ?? "en-us");
+    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(Resume?.Localization ?? "en-us");
+    var person = Resume?.Person;
+    var city = person?.City;
+    var street = person?.Street;
+    var post = person?.PostCode;
+    var country = person?.Country;
+    var phone = person?.Phone;
+    var email = person?.Email;
+
+    bool IsComma(string data)
+    {
+        if (data == phone && AllIsNullOrEmpty(email))
+        {
+            return false;
+        }
+
+        if (data == country && AllIsNullOrEmpty(phone, email))
+        {
+            return false;
+        }
+
+        if (data == post && AllIsNullOrEmpty(country, phone, email))
+        {
+            return false;
+        }
+
+        if (data == street && AllIsNullOrEmpty(post, country, phone, email))
+        {
+            return false;
+        }
+
+        if (data == city && AllIsNullOrEmpty(street, post, country, phone, email))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool AllIsNullOrEmpty(params string?[] details)
+    {
+        return details.All(string.IsNullOrEmpty);
+    }
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+    @@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+
+    @@page :first {
+        size: A4 portrait;
+        margin-top: 0;
+    }
+
+    @@page {
+        size: A4 portrait;
+        margin-top: var(--page-margin);
+        margin-bottom: var(--page-margin);
+    }
+
+    :root {
+        --title-left-font-size: 0.23in;
+        --title-right-font-size: 0.3in;
+        --common-font-size: 0.18in;
+        --width-page: 8.3in;
+        --header-height: 2.8in;
+        --common-margin: 0.25in;
+        --section-margin-bottom: 0.22in;
+        --title-margin-bottom: 0.1in;
+        --page-margin: 0.45in;
+    }
+
+    body {
+        font-family: "Open Sans", sans-serif;
+        font-size: var(--common-font-size);
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: var(--width-page);
+        height: var(--header-height);
+        background-color: #e1f0ff;
+        margin: auto auto var(--common-margin);
+    }
+
+    .container-body {
+        display: flex;
+        flex-direction: row;
+        width: var(--width-page);
+        margin: auto;
+    }
+
+    .container-left {
+        flex-direction: column;
+        width: 30%;
+        margin-left: var(--page-margin);
+        margin-right: var(--common-margin);
+    }
+
+    .container-right {
+        flex-direction: column;
+        margin-right: var(--page-margin);
+        width: 70%;
+    }
+
+    .full-name {
+        font-size: 0.45in;
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: bold;
+        margin: 0.25in var(--page-margin) 0.05in var(--page-margin);
+    }
+
+    .job-title {
+        font-size: 0.25in;
+        margin: 0 var(--page-margin) 0.05in var(--page-margin);
+    }
+
+    .contacts {
+        margin: 0 var(--page-margin) 0.25in var(--page-margin);
+    }
+
+    .links {
+        display: flex;
+        margin-bottom: var(--section-margin-bottom);
+    }
+
+    .title-right {
+        font-size: var(--title-right-font-size);
+        font-weight: bold;
+        font-family: "Space Grotesk", sans-serif;
+        margin-bottom: var(--title-margin-bottom);
+    }
+
+    .sub-title-right {
+        font-weight: bold;
+        margin-bottom: var(--title-margin-bottom);
+    }
+
+    .title-left {
+        font-size: var(--title-left-font-size);
+        font-weight: bold;
+        font-family: "Space Grotesk", sans-serif;
+        margin-bottom: var(--title-margin-bottom);
+    }
+
+    .section-left {
+        margin-bottom: var(--section-margin-bottom);
+    }
+
+    .section-right {
+        margin-bottom: var(--section-margin-bottom);
+    }
+
+    .title-left-val {
+        white-space: normal;
+    }
+
+    .hobby {
+        text-align: justify;
+    }
+
+    .date-interval {
+        margin-bottom: 10px;
+    }
+
+    .description-right {
+        margin-left: var(--common-margin);
+        margin-bottom: var(--section-margin-bottom);
+        white-space: pre-line;
+    }
+
+    .profile-description {
+        white-space: normal;
+        text-align: justify;
+    }
+
+    .white-space-pre {
+        white-space: pre;
+    }
+
+    .profile-description p {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .description-right p {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    a {
+        color: black;
+    }
+</style>
+
+<div class="header">
+    <div>
+        <div class="full-name">@person?.Firstname @person?.Lastname</div>
+        <div class="job-title">@person?.JobTitle</div>
+    </div>
+    <div class="contacts">
+        @if (!string.IsNullOrEmpty(city))
+        {
+            <span>@city</span>
+
+            @if (IsComma(city))
+            {
+                <span class="white-space-pre">, </span>
+            }
+        }
+
+        @if (!string.IsNullOrEmpty(street))
+        {
+            <span>@street</span>
+
+            @if (IsComma(street))
+            {
+                <span class="white-space-pre">, </span>
+            }
+        }
+
+        @if (!string.IsNullOrEmpty(post))
+        {
+            <span>@post</span>
+
+            @if (IsComma(post))
+            {
+                <span class="white-space-pre">, </span>
+            }
+        }
+
+        @if (!string.IsNullOrEmpty(country))
+        {
+            <span>@country</span>
+
+            @if (IsComma(country))
+            {
+                <span class="white-space-pre">, </span>
+            }
+        }
+
+        @if (!string.IsNullOrEmpty(phone))
+        {
+            <span>@phone</span>
+
+            @if (IsComma(phone))
+            {
+                <span class="white-space-pre">, </span>
+            }
+        }
+
+        @if (!string.IsNullOrEmpty(email))
+        {
+            <span>@email</span>
+        }
+    </div>
+</div>
+<div class="container-body">
+    <div class="container-left">
+        @if (Resume?.Links is not null && Resume.Links.Any())
+        {
+            <div class="links">
+                @foreach (var link in Resume.Links)
+                {
+                    <a href=@link.Uri>@link.Label</a>
+
+                    if (link != Resume.Links.Last())
+                    {
+                        <div class="white-space-pre">,</div>
+                    }
+                }
+            </div>
+        }
+        @if (person?.DateOfBirth is not null)
+        {
+            <div class="section-left">
+                <div class="title-left">@TemplateStrings.DateOfBirth</div>
+                <div class="title-left-val">@person.DateOfBirth.Value.ToString(dateOfBirthFormat)</div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(person?.Nationality) &&
+             !string.IsNullOrWhiteSpace(person.Nationality))
+        {
+            <div class="section-left">
+                <div class="title-left">@TemplateStrings.Nationality</div>
+                <div class="title-left-val">@person.Nationality</div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(person?.DrivingLicense) &&
+             !string.IsNullOrWhiteSpace(person.DrivingLicense))
+        {
+            <div class="section-left">
+                <div class="title-left">@TemplateStrings.DrivingLicense</div>
+                <div class="title-left-val">@person.DrivingLicense</div>
+            </div>
+        }
+        @if (Resume?.Skills is not null && Resume.Skills.Any())
+        {
+            <div class="section-left">
+                <div class="title-left">@TemplateStrings.Skills</div>
+                @foreach (var skill in Resume.Skills)
+                {
+                    <div class="title-left-val">@skill.Name</div>
+                }
+            </div>
+        }
+        @if (Resume?.Languages is not null && Resume.Languages.Any())
+        {
+            <div class="section-left">
+                <div class="title-left">@TemplateStrings.Languages</div>
+                @foreach (var language in Resume.Languages)
+                {
+                    <div class="title-left-val">@language.Name, @language.Level</div>
+                }
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Resume?.Hobbies) &&
+             !string.IsNullOrWhiteSpace(Resume.Hobbies))
+        {
+            <div class="section-left">
+                <div class="title-left">@TemplateStrings.Hobbies</div>
+                <div class="hobby">@((MarkupString)Resume.Hobbies.Sanitize())</div>
+            </div>
+        }
+    </div>
+    <div class="container-right">
+        @if (!string.IsNullOrEmpty(Resume?.Summary) &&
+             !string.IsNullOrWhiteSpace(Resume.Summary))
+        {
+            <div class="section-right">
+                <div class="title-right">@TemplateStrings.Profile</div>
+                <div class="profile-description">@((MarkupString)Resume.Summary.Sanitize())</div>
+            </div>
+        }
+        @if (Resume?.Experiences is not null && Resume.Experiences.Any())
+        {
+            <div class="section-right">
+                <div class="title-right">@TemplateStrings.EmploymentHistory</div>
+                @foreach (var history in Resume.Experiences)
+                {
+                    <div class="sub-title-right">@history.JobTitle, @history.Employer, @history.City</div>
+                    <div class="date-interval">
+                        @if (history.StartDate is not null)
+                        {
+                            @textInfo.ToTitleCase(history.StartDate.Value.ToString(dateIntervalFormat))
+                            <span> - </span>
+                        }
+                        @if (history.EndDate is not null)
+                        {
+                            if (history.StartDate is null)
+                            {
+                                <span> - </span>
+                            }
+
+                            @textInfo.ToTitleCase(history.EndDate.Value.ToString(dateIntervalFormat))
+                        }
+                    </div>
+                    <div class="description-right">
+                        @if (history.Description != null)
+                        {
+                            @((MarkupString)history.Description)
+                        }
+                    </div>
+                }
+            </div>
+        }
+        @if (Resume?.Educations is not null && Resume.Educations.Any())
+        {
+            <div class="section-right">
+                <div class="title-right">@TemplateStrings.Education</div>
+                @foreach (var education in Resume.Educations)
+                {
+                    <div class="sub-title-right">@education.Degree, @education.School, @education.City</div>
+                    <div class="date-interval">
+                        @if (education.StartDate is not null)
+                        {
+                            @textInfo.ToTitleCase(education.StartDate.Value.ToString(dateIntervalFormat))
+                            <span> - </span>
+                        }
+                        @if (education.EndDate is not null)
+                        {
+                            if (education.StartDate is null)
+                            {
+                                <span> - </span>
+                            }
+
+                            @textInfo.ToTitleCase(education.EndDate.Value.ToString(dateIntervalFormat))
+                        }
+                    </div>
+                    <div class="description-right">
+                        @if (education.Description != null)
+                        {
+                            @((MarkupString)education.Description)
+                        }
+                    </div>
+                }
+            </div>
+        }
+        @if (Resume?.Courses is not null && Resume.Courses.Any())
+        {
+            <div class="section-right">
+                <div class="title-right">@TemplateStrings.Courses</div>
+                @foreach (var course in Resume.Courses)
+                {
+                    <div class="sub-title-right">@course.Name, @course.School</div>
+                    <div class="date-interval">
+                        @if (course.StartDate is not null)
+                        {
+                            @textInfo.ToTitleCase(course.StartDate.Value.ToString(dateIntervalFormat))
+                            <span>-</span>
+                        }
+                        @if (course.EndDate is not null)
+                        {
+                            if (course.StartDate is null)
+                            {
+                                <span>-</span>
+                            }
+
+                            @textInfo.ToTitleCase(course.EndDate.Value.ToString(dateIntervalFormat))
+                        }
+                    </div>
+                    <div class="description-right">
+                        @if (course.Description != null)
+                        {
+                            @((MarkupString)course.Description)
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public Resume? Resume { get; set; }
+
+}

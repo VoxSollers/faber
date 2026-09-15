@@ -1,0 +1,51 @@
+name: .NET
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Verify solution project consistency
+        run: bash scripts/verify-solution-projects.sh
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      - name: Restore
+        run: dotnet restore Faber.sln
+
+      - name: Build
+        run: dotnet build Faber.sln --no-restore
+
+      # Loads each design-time DbContext through the repository-pinned dotnet-ef, so a package
+      # bump that breaks the migration tooling (EF Tools 10.x on net8.0, #555) fails here on the
+      # pull request. --no-connect never opens a connection; the design-time factories only
+      # require the connection string to be present, so these values are placeholders.
+      - name: Verify EF Core migrations
+        env:
+          ConnectionStrings__faberdb: Host=localhost;Port=5432;Database=faberdb;Username=faber;Password=faber
+        run: |
+          dotnet ef migrations list --no-connect --no-build --project src/api/Modules/Identity/Faber.Modules.Identity.Infrastructure
+          dotnet ef migrations list --no-connect --no-build --project src/api/Modules/Resumes/Faber.Modules.Resumes.Infrastructure
+
+      - name: Install Playwright browser
+        # Document rendering launches Playwright's default headless Chromium.
+        # The browser binary is versioned separately from its NuGet package.
+        run: pwsh src/api/Faber.Api/bin/Debug/net8.0/playwright.ps1 install --with-deps --only-shell
+
+      - name: Test
+        run: dotnet test --solution Faber.sln --no-build --no-restore

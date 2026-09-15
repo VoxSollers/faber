@@ -1,0 +1,18 @@
+/* Layout and colour are Tailwind utilities in the template; only the
+   entry motion lives here — a bottom sheet that slides up from the edge. */
+:host {
+  display: block;
+  width: 100%;
+  animation: fb-sheet-enter 220ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes fb-sheet-enter {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    animation: none;
+  }
+}

@@ -1,0 +1,26 @@
+.burger {
+  position: relative;
+  display: flex;
+  width: 1.125rem;
+  height: 0.625rem;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.burger span {
+  display: block;
+  height: 0.125rem;
+  width: 100%;
+  border-radius: 9999px;
+  background-color: currentColor;
+  transform-origin: center;
+  transition: transform 300ms ease, opacity 300ms ease;
+}
+
+.burger.open span:nth-child(1) {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.burger.open span:nth-child(2) {
+  transform: translateY(-4px) rotate(-45deg);
+}

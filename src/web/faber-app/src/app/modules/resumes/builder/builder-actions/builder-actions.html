@@ -1,0 +1,69 @@
+<!-- Save status — circular indicator. Purely decorative: the visuals below
+     never announce anything themselves, see the persistent live region. -->
+<span class="relative flex h-9 w-9 max-md:h-11 max-md:w-11 items-center justify-center" aria-hidden="true">
+  @switch (store.saveStatus()) {
+    @case ('idle') {
+      <!-- No background or icon before a resume has loaded. Same footprint as
+           the other states so the island does not shift when data arrives. -->
+      <span class="absolute inset-0" data-testid="save-status-idle"></span>
+    }
+    @case ('saving') {
+      <span
+        class="absolute inset-0 flex items-center justify-center rounded-full text-muted-foreground"
+        data-testid="save-status-saving"
+        title="Saving…"
+        [animate.enter]="animationsReady() ? 'fb-save-spinner-enter' : ''"
+        [animate.leave]="animationsReady() ? 'fb-save-spinner-leave' : ''">
+        <span class="block size-4 rounded-full border-2 border-line border-t-foreground animate-spin"></span>
+      </span>
+    }
+    @case ('saved') {
+      <span
+        class="absolute inset-0 flex items-center justify-center rounded-full bg-success/15 text-success-text"
+        data-testid="save-status-saved"
+        title="Saved"
+        [animate.enter]="animationsReady() ? 'fb-save-circle-enter' : ''">
+        <lucide-icon
+          name="check"
+          [size]="20"
+          [strokeWidth]="2.5"
+          [animate.enter]="animationsReady() ? 'fb-save-tick-enter' : ''" />
+      </span>
+    }
+    @case ('error') {
+      <span
+        class="absolute inset-0 flex items-center justify-center rounded-full bg-destructive/15 text-destructive-text"
+        data-testid="save-status-error"
+        [title]="errorLabel()"
+        [animate.enter]="animationsReady() ? 'fb-save-error-enter' : ''">
+        <lucide-icon name="circle-alert" [size]="20" [strokeWidth]="2" />
+      </span>
+    }
+  }
+</span>
+
+<!-- One persistent live region for the whole indicator lifecycle. It never
+     leaves the DOM — only its text changes — so it reliably announces the
+     terminal state exactly once, with no intermediate "Saving" announcement. -->
+<span class="sr-only" role="status" aria-live="polite">{{ saveAnnouncement() }}</span>
+
+<!-- Localization — frosted-glass dropdown; opens away from the island -->
+<app-localization [placement]="menuPlacement()" />
+
+<!-- Download PDF — circular, brand yellow. Enabled with or without a cached
+     preview blob: the store falls back to rendering one on demand (#425). -->
+<button
+  type="button"
+  data-testid="download-pdf"
+  class="flex h-9 w-9 max-md:h-11 max-md:w-11 items-center justify-center rounded-full bg-brand-yellow text-gray-900 cursor-pointer transition-[border-radius,opacity] duration-200 ease-out hover:enabled:rounded-xl disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+  [disabled]="!store.canDownload() || store.isDownloading()"
+  [attr.aria-busy]="store.isDownloading()"
+  aria-label="Download PDF"
+  title="Download PDF"
+  (click)="store.downloadPdf()">
+  @if (store.isDownloading()) {
+    <span class="block size-4 rounded-full border-2 border-gray-900/30 border-t-gray-900 animate-spin" aria-hidden="true"></span>
+  } @else {
+    <lucide-icon name="download" [size]="20" [strokeWidth]="2" aria-hidden="true" />
+  }
+</button>

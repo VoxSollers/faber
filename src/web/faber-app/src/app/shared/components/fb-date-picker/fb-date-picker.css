@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  /* strip Material's circular hover/focus/press state-layer backgrounds on the toggle */
+  --mat-icon-button-hover-state-layer-opacity: 0;
+  --mat-icon-button-focus-state-layer-opacity: 0;
+  --mat-icon-button-pressed-state-layer-opacity: 0;
+}
+
+/*
+ * On hover, shift the icon to the brand color — the same color the icon uses
+ * when the picker is open. The active-state token isn't declared by our theme
+ * (Material only falls back to --mat-sys-primary inside its own rule), so point
+ * straight at the concrete token instead of the empty active-state variable.
+ */
+.toggle-wrap:hover {
+  --mat-datepicker-toggle-icon-color: var(--color-primary);
+}

@@ -1,0 +1,48 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Nationality" xml:space="preserve">
+        <value>Національність</value>
+    </data>
+    <data name="DateOfBirth" xml:space="preserve">
+        <value>Дата народження</value>
+    </data>
+    <data name="Skills" xml:space="preserve">
+        <value>Вміння та навички</value>
+    </data>
+    <data name="Languages" xml:space="preserve">
+        <value>Мови</value>
+    </data>
+    <data name="Hobbies" xml:space="preserve">
+        <value>Хобі</value>
+    </data>
+    <data name="Profile" xml:space="preserve">
+        <value>Профіль</value>
+    </data>
+    <data name="EmploymentHistory" xml:space="preserve">
+        <value>Досвід роботи</value>
+    </data>
+    <data name="Education" xml:space="preserve">
+        <value>Навчання та освіта</value>
+    </data>
+    <data name="Courses" xml:space="preserve">
+        <value>Курси</value>
+    </data>
+    <data name="DrivingLicense" xml:space="preserve">
+        <value>Посвідчення водія</value>
+    </data>
+</root>
