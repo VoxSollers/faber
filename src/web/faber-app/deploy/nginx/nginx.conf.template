@@ -1,4 +1,4 @@
-# nginx configuration for the faber-app edge container (ghcr.io/1viski/faber-web).
+# nginx configuration for the faber-app edge container (ghcr.io/<OWNER>/faber-web).
 #
 # Ported from src/web/Faber.NgApp/faber-ngapp/nginx.conf (issue #429). This
 # container is the edge for the whole deployment, not just a static-file server:
