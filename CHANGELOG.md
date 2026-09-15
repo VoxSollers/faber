@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1](https://github.com/VoxSollers/faber/compare/faber-v0.2.0...faber-v0.2.1) (2026-09-15)
+
+
+### Bug Fixes
+
+* **ci:** publish release images under a lowercase GHCR namespace ([8c88ba9](https://github.com/VoxSollers/faber/commit/8c88ba905c68393920c5261e8b9f1eab2d4d3a45))
+* **ci:** publish release images under a lowercase GHCR namespace ([f085cda](https://github.com/VoxSollers/faber/commit/f085cdacffee3d0ecc64ed77ddaeae8cabe4e3ab)), closes [#4](https://github.com/VoxSollers/faber/issues/4)
+* **identity:** stop writing user e-mail addresses to logs and messages ([#10](https://github.com/VoxSollers/faber/issues/10)) ([70dc184](https://github.com/VoxSollers/faber/commit/70dc1845d75ff0c6f65ebf167b217ba1eef5decb))
+
 ## 0.2.0
 
 First public release. Faber was developed in a private repository before this
