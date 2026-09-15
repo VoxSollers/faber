@@ -13,6 +13,12 @@ namespace Faber.Modules.Users.Application.Features.GetUserByEmail;
 public class GetUserByEmailEndpoint(ILogger<GetUserByEmailEndpoint> logger)
     : Endpoint<GetUserByEmailRequest, Results<Ok<GetUserResponse>, NotFound<Error>>>
 {
+    /// <summary>
+    /// Logged instead of the request path: this route carries the address in the path itself, so
+    /// logging the path would write a user e-mail address into the logs.
+    /// </summary>
+    private const string RouteName = "users/{Email}/email";
+
     public override void Configure()
     {
         Get("{Email}/email");
@@ -25,22 +31,20 @@ public class GetUserByEmailEndpoint(ILogger<GetUserByEmailEndpoint> logger)
         GetUserByEmailRequest request,
         CancellationToken ct)
     {
-        var path = HttpContext.Request.Path.Value;
-        logger.LogInformation("[HTTP GET] {Path} started for {Email}", path, request.Email);
+        logger.LogInformation("[HTTP GET] {Route} started", RouteName);
         var result = await request.MapToCommand().ExecuteAsync(ct);
 
         if (result.IsError)
         {
             logger.LogWarning(
-                "[HTTP GET] {Path} failed for {Email}: {Error}",
-                path,
-                request.Email,
+                "[HTTP GET] {Route} failed: {Error}",
+                RouteName,
                 result.FirstError.Description);
 
             return TypedResults.NotFound(result.FirstError);
         }
 
-        logger.LogInformation("[HTTP GET] {Path} completed successfully for {Email}", path, request.Email);
+        logger.LogInformation("[HTTP GET] {Route} completed successfully", RouteName);
 
         return TypedResults.Ok(result.Value);
     }

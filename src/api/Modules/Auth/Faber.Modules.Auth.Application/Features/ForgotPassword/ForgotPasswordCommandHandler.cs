@@ -20,13 +20,13 @@ public class ForgotPasswordCommandHandler(
 
     public async Task<ErrorOr<Success>> ExecuteAsync(ForgotPasswordCommand command, CancellationToken ct)
     {
-        logger.LogInformation("[START] {HandlerName} for {Email}", HandlerName, command.Email);
-        logger.LogInformation("[STEP] Verifying existence of user with email {Email}", command.Email);
+        logger.LogInformation("[START] {HandlerName}", HandlerName);
+        logger.LogInformation("[STEP] Verifying existence of the user for the supplied address");
         var userResponse = await userModuleApi.GetUserByEmailAsync(command.Email, ct);
 
         if (userResponse is null)
         {
-            logger.LogWarning("[SKIP] {HandlerName} | No account for email: {Email}", HandlerName, command.Email);
+            logger.LogWarning("[SKIP] {HandlerName} | No account for the supplied address", HandlerName);
 
             return Result.Success;
         }
@@ -43,10 +43,7 @@ public class ForgotPasswordCommandHandler(
 
         if (string.IsNullOrEmpty(response.Selector))
         {
-            logger.LogError(
-                "[FAIL] {HandlerName} | Error while storing action token: {Email}",
-                HandlerName,
-                command.Email);
+            logger.LogError("[FAIL] {HandlerName} | Error while storing action token", HandlerName);
 
             return Error.Failure("Auth.ForgotPassword", "Error while storing action token");
         }
@@ -55,10 +52,7 @@ public class ForgotPasswordCommandHandler(
         var eventModel = new ForgotPasswordAcceptedEvent(command.Email, combinedKey);
         await eventModel.PublishAsync(cancellation: ct);
 
-        logger.LogInformation(
-            "[SUCCESS] {HandlerName} | Reset email published for: {Email}",
-            HandlerName,
-            command.Email);
+        logger.LogInformation("[SUCCESS] {HandlerName} | Reset email published", HandlerName);
 
         return Result.Success;
     }

@@ -153,9 +153,9 @@ public class IdentityModuleApi : IIdentityModuleApi
 
         if (user?.Id is null)
         {
-            _logger.LogWarning("User with email {Email} not found during password reset.", email);
+            _logger.LogWarning("No user matched the supplied address during password reset.");
 
-            return new ResetPasswordResponse(false, $"User with email {email} not found.");
+            return new ResetPasswordResponse(false, "User not found.");
         }
 
         var credential = new CredentialRequest
@@ -165,7 +165,7 @@ public class IdentityModuleApi : IIdentityModuleApi
 
         await _keycloakApi.ResetPasswordAsync(_options.Realm, user.Id, adminToken.Value, credential, cancellationToken);
 
-        _logger.LogInformation("Reset password for {UserId} (email: {Email}) successful!", user.Id, email);
+        _logger.LogInformation("Reset password for {UserId} successful!", user.Id);
 
         return new ResetPasswordResponse(true);
     }
@@ -232,9 +232,9 @@ public class IdentityModuleApi : IIdentityModuleApi
 
         if (user?.Id is null)
         {
-            _logger.LogWarning("User with email {Email} not found in Keycloak", email);
+            _logger.LogWarning("No user matched the supplied address in Keycloak.");
 
-            return new VerifyEmailResponse(false, $"User with email {email} not found.");
+            return new VerifyEmailResponse(false, "User not found.");
         }
 
         await _keycloakApi.VerifyUserEmailAsync(
@@ -244,7 +244,7 @@ public class IdentityModuleApi : IIdentityModuleApi
             new UserEmailVerifyRequest { EmailVerified = true, RequiredActions = [] },
             cancellationToken);
 
-        _logger.LogInformation("Email verified in Keycloak for user {Email}", email);
+        _logger.LogInformation("Email verified in Keycloak for user {UserId}", user.Id);
 
         return new VerifyEmailResponse(true);
     }

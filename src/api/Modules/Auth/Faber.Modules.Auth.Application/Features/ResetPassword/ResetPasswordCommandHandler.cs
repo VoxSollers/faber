@@ -41,7 +41,7 @@ public class ResetPasswordCommandHandler(
             return Error.Failure("Users.ResetPassword", "Email not found!");
         }
 
-        logger.LogInformation("[STEP] Resetting password for email: {Email}", response.Email);
+        logger.LogInformation("[STEP] Resetting password for the address carried by the verified token");
         var resetResult = await identityModuleApi.ResetPasswordByEmailAsync(response.Email, command.NewPassword, ct);
 
         if (!resetResult.IsSuccess)
@@ -57,10 +57,7 @@ public class ResetPasswordCommandHandler(
         logger.LogInformation("[STEP] Consuming action token");
         await identityModuleApi.ConsumeActionTokenAsync(command.VerificationKey.Selector, ct);
 
-        logger.LogInformation(
-            "[SUCCESS] {HandlerName} | Password reset successfully for {Email}",
-            HandlerName,
-            response.Email);
+        logger.LogInformation("[SUCCESS] {HandlerName} | Password reset successfully", HandlerName);
 
         return Result.Success;
     }

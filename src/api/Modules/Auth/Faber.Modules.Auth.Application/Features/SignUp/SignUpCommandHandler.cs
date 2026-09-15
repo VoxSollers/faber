@@ -20,7 +20,7 @@ public class SignUpCommandHandler(
 
     public async Task<ErrorOr<SignUpResponse>> ExecuteAsync(SignUpCommand command, CancellationToken ct)
     {
-        logger.LogInformation("[START] {HandlerName} for {Email}", HandlerName, command.Email);
+        logger.LogInformation("[START] {HandlerName}", HandlerName);
         logger.LogInformation("[STEP] Creating user in User module");
 
         var userRequest = new CreateUserRequest(
@@ -33,7 +33,7 @@ public class SignUpCommandHandler(
 
         if (userResult is null)
         {
-            logger.LogError("[FAIL] {HandlerName} | Error while creating user: {Email}", HandlerName, command.Email);
+            logger.LogError("[FAIL] {HandlerName} | Error while creating user", HandlerName);
 
             return Error.Failure("Auth.SignUp", "Error while creating user");
         }
@@ -56,23 +56,20 @@ public class SignUpCommandHandler(
 
         if (string.IsNullOrEmpty(response.Selector))
         {
-            logger.LogError(
-                "[FAIL] {HandlerName} | Error while storing verification token for: {Email}",
-                HandlerName,
-                command.Email);
+            logger.LogError("[FAIL] {HandlerName} | Error while storing verification token", HandlerName);
 
             return Error.Failure("Auth.SignUp", "Error while storing verification token");
         }
 
-        logger.LogInformation("[STEP] Publishing NewUserSignedUpEvent for: {Email}", command.Email);
+        logger.LogInformation("[STEP] Publishing NewUserSignedUpEvent");
         var combinedKey = new CombinedKey($"{response.Selector}{token}");
         var eventModel = new NewUserSignedUpEvent(command.Email, combinedKey);
         await eventModel.PublishAsync(cancellation: ct);
 
         logger.LogInformation(
-            "[SUCCESS] {HandlerName} | User {Email} signed up successfully",
+            "[SUCCESS] {HandlerName} | User {UserId} signed up successfully",
             HandlerName,
-            command.Email);
+            userResult.UserId);
 
         return userResult.MapToResponse();
     }

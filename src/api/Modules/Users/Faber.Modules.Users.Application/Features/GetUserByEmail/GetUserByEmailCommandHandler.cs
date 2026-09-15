@@ -18,19 +18,19 @@ public class GetUserByEmailCommandHandler(
         GetUserByEmailCommand command,
         CancellationToken ct)
     {
-        logger.LogInformation("[START] {HandlerName} for {Email}", HandlerName, command.Email);
-        logger.LogInformation("[STEP] Fetching user by email: {Email}", command.Email);
+        logger.LogInformation("[START] {HandlerName}", HandlerName);
+        logger.LogInformation("[STEP] Fetching the user for the supplied address");
 
         var userResponse = await userModuleApi.GetUserByEmailAsync(command.Email, ct);
 
         if (userResponse is null)
         {
-            logger.LogWarning("[FAIL] {HandlerName} | User not found: {Email}", HandlerName, command.Email);
+            logger.LogWarning("[FAIL] {HandlerName} | User not found", HandlerName);
 
-            return Error.NotFound("User.NotFound", $"User by {command.Email} not found");
+            return Error.NotFound("User.NotFound", "User not found");
         }
 
-        logger.LogInformation("[SUCCESS] {HandlerName} | User found: {Email}", HandlerName, command.Email);
+        logger.LogInformation("[SUCCESS] {HandlerName} | User found", HandlerName);
 
         return userResponse.MapToResponse();
     }
