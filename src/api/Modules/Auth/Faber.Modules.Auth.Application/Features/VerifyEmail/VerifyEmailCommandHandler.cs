@@ -43,7 +43,7 @@ public class VerifyEmailCommandHandler(
             return Error.Failure("Users.VerifyEmail", "Email not found!");
         }
 
-        logger.LogInformation("[STEP] Verifying user email in Keycloak: {Email}", response.Email);
+        logger.LogInformation("[STEP] Verifying user email in Keycloak");
         var verifyResult = await identityModuleApi.VerifyEmailAsync(response.Email, ct);
 
         if (!verifyResult.IsSuccess)
@@ -56,13 +56,10 @@ public class VerifyEmailCommandHandler(
             return Error.Failure("Users.VerifyEmail", verifyResult.Message ?? "Email verification failed.");
         }
 
-        logger.LogInformation("[STEP] Consuming action token for: {Email}", response.Email);
+        logger.LogInformation("[STEP] Consuming action token");
         await identityModuleApi.ConsumeActionTokenAsync(command.VerificationKey.Selector, ct);
 
-        logger.LogInformation(
-            "[SUCCESS] {HandlerName} | Email verified successfully for: {Email}",
-            HandlerName,
-            response.Email);
+        logger.LogInformation("[SUCCESS] {HandlerName} | Email verified successfully", HandlerName);
 
         return new VerifyEmailResponse(response.IsValid);
     }

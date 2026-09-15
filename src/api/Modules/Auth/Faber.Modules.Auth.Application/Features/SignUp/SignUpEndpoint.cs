@@ -26,21 +26,20 @@ public class SignUpEndpoint(ILogger<SignUpEndpoint> logger)
         CancellationToken ct)
     {
         var path = HttpContext.Request.Path.Value;
-        logger.LogInformation("[HTTP POST] {Path} started for {Email}", path, request.Email);
+        logger.LogInformation("[HTTP POST] {Path} started", path);
         var result = await request.MapToCommand().ExecuteAsync(ct);
 
         if (result.IsError)
         {
             logger.LogWarning(
-                "[HTTP POST] {Path} failed for {Email}: {Error}",
+                "[HTTP POST] {Path} failed: {Error}",
                 path,
-                request.Email,
                 result.FirstError.Description);
 
             return TypedResults.BadRequest(result.FirstError);
         }
 
-        logger.LogInformation("[HTTP POST] {Path} completed successfully for {Email}", path, request.Email);
+        logger.LogInformation("[HTTP POST] {Path} completed successfully", path);
 
         return TypedResults.NoContent();
     }

@@ -42,10 +42,16 @@ public static class RateLimitRejectionHandler
             .GetRequiredService<ILoggerFactory>()
             .CreateLogger(LogCategory);
 
+        // The route pattern comes from the endpoint table, not from the request, so a caller cannot
+        // inject line breaks or forged entries into the log through the requested path.
+        var route = httpContext.GetEndpoint() is RouteEndpoint routeEndpoint
+            ? routeEndpoint.RoutePattern.RawText
+            : null;
+
         logger.LogWarning(
-            "Rate limit exceeded: policy {Policy}, path {Path}, retry after {RetryAfterSeconds}s",
+            "Rate limit exceeded: policy {Policy}, route {Route}, retry after {RetryAfterSeconds}s",
             policy,
-            httpContext.Request.Path,
+            route ?? "(unmatched)",
             retryAfterSeconds);
 
         await RateLimitRejection.Problem(httpContext, retryAfterSeconds).ExecuteAsync(httpContext);

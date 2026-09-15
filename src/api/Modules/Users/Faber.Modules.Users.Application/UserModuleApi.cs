@@ -47,7 +47,7 @@ public class UserModuleApi : IUserModuleApi
 
         if (user is null)
         {
-            _logger.LogInformation("User by {Email} not found.", email);
+            _logger.LogInformation("No user matched the supplied address.");
 
             return null;
         }
