@@ -31,7 +31,7 @@ FROM nginx:1.29-alpine
 COPY --from=build /app/dist/faber-app/browser /usr/share/nginx/html
 
 # A complete, non-templated config — no envsubst, no environment variables.
-COPY deploy/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
