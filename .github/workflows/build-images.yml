@@ -1,8 +1,18 @@
 name: Build and push Docker images
 
+# A release that release-please creates with the default GITHUB_TOKEN does not
+# raise a `release` event that starts other workflows, so release-please.yml
+# calls this workflow directly and passes the tag it created. The `release`
+# trigger still covers releases a maintainer publishes by hand.
 on:
   release:
     types: [published]
+  workflow_call:
+    inputs:
+      tag:
+        description: Release tag to check out and to tag the images with.
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -11,10 +21,14 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.RELEASE_TAG }}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
@@ -39,7 +53,7 @@ jobs:
           file: src/api/Faber.Api/Dockerfile
           push: true
           tags: |
-            ${{ env.IMAGE_NAMESPACE }}/faber-api:${{ github.ref_name }}
+            ${{ env.IMAGE_NAMESPACE }}/faber-api:${{ env.RELEASE_TAG }}
             ${{ env.IMAGE_NAMESPACE }}/faber-api:latest
           labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           cache-from: type=gha
@@ -52,7 +66,7 @@ jobs:
           file: src/api/Jobs/Faber.Migrations/Dockerfile
           push: true
           tags: |
-            ${{ env.IMAGE_NAMESPACE }}/faber-migrations:${{ github.ref_name }}
+            ${{ env.IMAGE_NAMESPACE }}/faber-migrations:${{ env.RELEASE_TAG }}
             ${{ env.IMAGE_NAMESPACE }}/faber-migrations:latest
           labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           cache-from: type=gha
@@ -70,7 +84,7 @@ jobs:
           file: src/web/faber-app/Dockerfile
           push: true
           tags: |
-            ${{ env.IMAGE_NAMESPACE }}/faber-web:${{ github.ref_name }}
+            ${{ env.IMAGE_NAMESPACE }}/faber-web:${{ env.RELEASE_TAG }}
             ${{ env.IMAGE_NAMESPACE }}/faber-web:latest
           labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           cache-from: type=gha,scope=faber-web
