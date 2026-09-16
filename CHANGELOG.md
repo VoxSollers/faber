@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/VoxSollers/faber/compare/faber-v0.2.1...faber-v0.2.2) (2026-09-16)
+
+
+### Refactoring
+
+* **web:** reduce faber-web image to a static SPA server ([#13](https://github.com/VoxSollers/faber/issues/13)) ([9a5df58](https://github.com/VoxSollers/faber/commit/9a5df589e78012dd74379535e5e62a49e81e8ec7))
+
 ## [0.2.1](https://github.com/VoxSollers/faber/compare/faber-v0.2.0...faber-v0.2.1) (2026-09-15)
 
 
