@@ -23,36 +23,20 @@ COPY . .
 RUN npm run build -- --configuration=production
 
 # -------------------------------------------------------------- runtime stage
-# Debian, not Alpine: the maintenance scripts are #!/bin/bash and use GNU
-# `stat -c %y`. Pinned rather than :latest so a rebuild is reproducible.
-FROM nginx:1.29
+# Alpine, not Debian: this stage only serves static files now, so the smaller
+# base is preferable. Pinned rather than :latest so a rebuild is reproducible.
+FROM nginx:1.29-alpine
 
 # The SPA.
 COPY --from=build /app/dist/faber-app/browser /usr/share/nginx/html
 
-# The edge config ships as a template. nginx's own entrypoint renders it with
-# envsubst into /etc/nginx/nginx.conf before starting. NGINX_ENVSUBST_FILTER is
-# what keeps envsubst from blanking nginx's runtime variables ($host, $uri, ...);
-# only FABER_-prefixed names are substituted.
-#
-# FABER_API_UPSTREAM must carry NO trailing slash: the config appends
-# $request_uri to it verbatim, so "http://host:8080/" would proxy to
-# "http://host:8080//api/v1/..." and the API would 404 on the double slash.
-COPY deploy/nginx/nginx.conf.template /etc/nginx/templates/nginx.conf.template
-ENV NGINX_ENVSUBST_OUTPUT_DIR="/etc/nginx" \
-    NGINX_ENVSUBST_FILTER="^FABER_" \
-    FABER_API_UPSTREAM="http://radju.webapi:8080" \
-    FABER_APP_DOMAIN="example.com" \
-    FABER_MAINTENANCE_ALLOWED_IP="127.0.0.1"
+# A complete, non-templated config — no envsubst, no environment variables.
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Maintenance page plus the three toggle scripts used by the private
-# production deployment.
-COPY deploy/maintenance/ /usr/share/nginx/html/maintenance/
-COPY deploy/scripts/ /usr/local/bin/
-RUN chmod +x /usr/local/bin/maintenance-*.sh
+EXPOSE 80
 
-EXPOSE 80 443
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget -q --spider http://127.0.0.1/healthz || exit 1
 
 # ENTRYPOINT (/docker-entrypoint.sh) and CMD (nginx -g "daemon off;") are
-# inherited from the base image — the entrypoint is what runs envsubst, so do
-# not override it.
+# inherited from the base image.
