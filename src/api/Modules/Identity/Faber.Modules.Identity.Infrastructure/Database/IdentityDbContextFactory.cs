@@ -26,7 +26,7 @@ public class IdentityDbContextFactory : IDesignTimeDbContextFactory<IdentityDbCo
                 connectionString,
                 npgsqlOptions => npgsqlOptions.MigrationsHistoryTable(
                     DbConstants.MigrationsHistoryTableName,
-                    DbConstants.IdentitySchemaName))
+                    DbConstants.SchemaName))
             .UseSnakeCaseNamingConvention();
 
         return new IdentityDbContext(optionsBuilder.Options);

@@ -27,7 +27,7 @@ builder.Services.AddDbContext<IdentityDbContext>(o => o
     .UseNpgsql(connectionString, npgsql =>
         npgsql.MigrationsHistoryTable(
             IdentityDbConst.MigrationsHistoryTableName,
-            IdentityDbConst.IdentitySchemaName))
+            IdentityDbConst.SchemaName))
     .UseSnakeCaseNamingConvention());
 
 builder.Services.AddOptions<MigrationOptions>()
