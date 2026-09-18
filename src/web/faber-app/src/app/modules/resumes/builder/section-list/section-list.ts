@@ -18,6 +18,7 @@ import { Skill } from '../skill/skill';
 import { Language } from '../language/language';
 import { Link } from '../link/link';
 import { Course } from '../course/course';
+import { Project } from '../project/project';
 import { Hobby } from '../hobby/hobby';
 import { FbAccordion } from '../../../../shared/components/fb-accordion/fb-accordion';
 import { FbAccordionItem } from '../../../../shared/components/fb-accordion-item/fb-accordion-item';
@@ -46,6 +47,7 @@ export class SectionList {
   private readonly languageCount   = computed(() => this.store.languages().length);
   private readonly linkCount       = computed(() => this.store.links().length);
   private readonly courseCount     = computed(() => this.store.courses().length);
+  private readonly projectCount    = computed(() => this.store.projects().length);
 
   private readonly openState = signal<Record<string, boolean>>({ person: true });
 
@@ -75,6 +77,7 @@ export class SectionList {
     { id: 'language',   label: 'Languages',            icon: 'globe',          component: Language,   count: this.languageCount },
     { id: 'link',       label: 'Links',                icon: 'link-2',         component: Link,       count: this.linkCount },
     { id: 'course',     label: 'Courses',              icon: 'book-open',      component: Course,     count: this.courseCount },
+    { id: 'project',    label: 'Projects',             icon: 'briefcase',      component: Project,    count: this.projectCount },
     { id: 'hobby',      label: 'Hobbies',              icon: 'heart',          component: Hobby },
   ];
 

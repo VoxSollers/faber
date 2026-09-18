@@ -59,6 +59,11 @@ describe('EntryTitles', () => {
     expect(host.titles.resolve('unregistered', ['Developer', 'Acme'])).toBe('Developer at Acme');
   });
 
+  it('formats a project name and role with the standard entry label', () => {
+    expect(host.titles.resolve('project-1', ['Faber', 'Lead developer']))
+      .toBe('Faber at Lead developer');
+  });
+
   it('uses the live form value over the store-model fallback once registered', () => {
     const form = host.fb.group({ jobTitle: 'Developer', employer: 'Acme' });
     host.titles.register('e1', form, ['jobTitle', 'employer']);

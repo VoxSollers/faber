@@ -23,7 +23,7 @@ export const firstNonEmptyTitlePart: TitleFormatter = parts =>
  * only ever reflects what the server confirmed — this class is local display
  * state layered on top of it, never written back into the store.
  *
- * Reused verbatim by Experience, Education and Course: each registers its
+ * Reused verbatim by Experience, Education, Course and Project: each registers its
  * own two title-field control names and calls `resolve` from the `titleFn`
  * passed to `app-orderable-list`.
  */

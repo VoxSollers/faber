@@ -61,6 +61,7 @@ describe('Builder', () => {
     languages: signal([]),
     links: signal([]),
     courses: signal([]),
+    projects: signal([]),
     hobbies: signal(''),
     summary: signal(''),
     localization: signal(''),

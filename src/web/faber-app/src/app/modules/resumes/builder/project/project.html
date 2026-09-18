@@ -1,0 +1,39 @@
+<app-orderable-list
+  [items]="store.projects()"
+  [hideTitle]="true"
+  title="Projects"
+  addLabel="Add project"
+  [titleFn]="projectTitle"
+  (add)="store.addProject()"
+  (delete)="store.deleteProject($event)"
+  (itemDrop)="store.reorderProjects($event)">
+  <ng-template let-item>
+    <form [formGroup]="getForm(item)" class="flex flex-col gap-3 py-2">
+      <div
+        class="grid grid-cols-[repeat(auto-fit,minmax(11rem,1fr))] gap-3"
+        (focusin)="onTitleFocusIn(item)"
+        (focusout)="onTitleFocusOut(item, $event)">
+        <fb-field label="Project name" placeholder="e.g. Faber" formControlName="name" />
+        <fb-field label="Role" placeholder="e.g. Lead developer" formControlName="role" />
+      </div>
+      <fb-field label="Project URL" type="url" placeholder="https://…" formControlName="url" />
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-3">
+        <fb-date-picker
+          label="Start date"
+          precision="month"
+          [locale]="store.localization()"
+          formControlName="startDate" />
+        <fb-date-picker
+          label="End date"
+          precision="month"
+          [allowPresent]="true"
+          [locale]="store.localization()"
+          formControlName="endDate" />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <span class="text-sm font-medium text-muted-foreground">Description</span>
+        <fb-rich-text formControlName="description" placeholder="Describe the project and your contribution…" />
+      </div>
+    </form>
+  </ng-template>
+</app-orderable-list>
