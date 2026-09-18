@@ -42,6 +42,9 @@
     <data name="Courses" xml:space="preserve">
         <value>Kursy</value>
     </data>
+    <data name="Projects" xml:space="preserve">
+        <value>Projekty</value>
+    </data>
     <data name="DrivingLicense" xml:space="preserve">
         <value>Prawo jazdy</value>
     </data>
