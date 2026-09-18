@@ -105,7 +105,7 @@ Typical package set for EF-backed modules:
 public static class DbConstants
 {
     public const string SchemaName = "resumes";
-    public const string MigrationsHistoryTableName = "resumes_migrations_history";
+    public const string MigrationsHistoryTableName = "migrations_history";
 }
 ```
 
@@ -345,7 +345,7 @@ The service exits 0 on success and non-zero on any failure, aborting the deploy.
 
 | DbContext | Schema | History table | Module Infrastructure project |
 |---|---|---|---|
-| `ResumesDbContext` | `resumes` | `resumes_migrations_history` | `Faber.Modules.Resumes.Infrastructure` |
+| `ResumesDbContext` | `resumes` | `migrations_history` | `Faber.Modules.Resumes.Infrastructure` |
 | `IdentityDbContext` | `identity` | `migrations_history` | `Faber.Modules.Identity.Infrastructure` |
 
 Schemas that EF Core does not own are listed in `Migrations:ExternalSchemas`. The worker only ensures they exist, using EF's own `EnsureSchema` so a role without `CREATE` on the database still succeeds once they do; it never migrates their contents. The AppHost declares `keycloak` this way, next to `KC_DB_SCHEMA`. Production declares none unless configured.

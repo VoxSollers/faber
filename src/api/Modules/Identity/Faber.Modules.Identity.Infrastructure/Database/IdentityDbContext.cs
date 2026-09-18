@@ -10,7 +10,7 @@ public class IdentityDbContext(DbContextOptions<IdentityDbContext> options) : Db
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema(IdentitySchemaName);
+        modelBuilder.HasDefaultSchema(SchemaName);
 
         modelBuilder.Entity<ActionToken>(entity =>
         {

@@ -63,7 +63,7 @@ public static class DependencyInjection
                 npgsqlOptions =>
                     npgsqlOptions.MigrationsHistoryTable(
                         DbConstants.MigrationsHistoryTableName,
-                        DbConstants.IdentitySchemaName))
+                        DbConstants.SchemaName))
             .UseSnakeCaseNamingConvention()
         );
 

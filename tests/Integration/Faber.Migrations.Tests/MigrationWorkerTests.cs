@@ -103,7 +103,7 @@ public class MigrationWorkerTests : IAsyncLifetime
         resumesRows.ShouldBeGreaterThan(0, "ResumesDbContext migration history should have rows");
 
         var identityRows = await QueryCount(conn,
-            $"SELECT COUNT(*) FROM \"{IdentityDbConst.IdentitySchemaName}\".\"{IdentityDbConst.MigrationsHistoryTableName}\"", ct);
+            $"SELECT COUNT(*) FROM \"{IdentityDbConst.SchemaName}\".\"{IdentityDbConst.MigrationsHistoryTableName}\"", ct);
         identityRows.ShouldBeGreaterThan(0, "IdentityDbContext migration history should have rows");
     }
 
@@ -123,7 +123,7 @@ public class MigrationWorkerTests : IAsyncLifetime
         resumesRows.ShouldBeGreaterThan(0, "Development must run ResumesDbContext migrations");
 
         var identityRows = await QueryCount(conn,
-            $"SELECT COUNT(*) FROM \"{IdentityDbConst.IdentitySchemaName}\".\"{IdentityDbConst.MigrationsHistoryTableName}\"", ct);
+            $"SELECT COUNT(*) FROM \"{IdentityDbConst.SchemaName}\".\"{IdentityDbConst.MigrationsHistoryTableName}\"", ct);
         identityRows.ShouldBeGreaterThan(0, "Development must run IdentityDbContext migrations");
     }
 
@@ -177,9 +177,9 @@ public class MigrationWorkerTests : IAsyncLifetime
                     $"""
                      CREATE ROLE limited_migrator LOGIN PASSWORD 'limited';
                      REVOKE CREATE ON DATABASE "{admin.Database}" FROM PUBLIC;
-                     GRANT USAGE ON SCHEMA "{ResumesDbConst.SchemaName}", "{IdentityDbConst.IdentitySchemaName}" TO limited_migrator;
+                     GRANT USAGE ON SCHEMA "{ResumesDbConst.SchemaName}", "{IdentityDbConst.SchemaName}" TO limited_migrator;
                      GRANT SELECT ON "{ResumesDbConst.SchemaName}"."{ResumesDbConst.MigrationsHistoryTableName}",
-                                     "{IdentityDbConst.IdentitySchemaName}"."{IdentityDbConst.MigrationsHistoryTableName}"
+                                     "{IdentityDbConst.SchemaName}"."{IdentityDbConst.MigrationsHistoryTableName}"
                            TO limited_migrator;
                      """, ct);
             }
@@ -371,7 +371,7 @@ file static class HostBuilderExtensions
             .UseNpgsql(connectionString, npgsql =>
                 npgsql.MigrationsHistoryTable(
                     IdentityDbConst.MigrationsHistoryTableName,
-                    IdentityDbConst.IdentitySchemaName))
+                    IdentityDbConst.SchemaName))
             .UseSnakeCaseNamingConvention());
 
         return builder;

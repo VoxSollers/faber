@@ -3,7 +3,7 @@ namespace Faber.Modules.Resumes.Infrastructure.Database;
 public static class DbConstants
 {
     public const string SchemaName = "resumes";
-    public const string MigrationsHistoryTableName = "resumes_migrations_history";
+    public const string MigrationsHistoryTableName = "migrations_history";
 
     public const int DescriptionMaxLength = 1000;
     public const int SummaryMaxLength = 2000;
