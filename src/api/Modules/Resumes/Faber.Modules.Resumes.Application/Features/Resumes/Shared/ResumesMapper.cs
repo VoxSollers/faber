@@ -19,6 +19,7 @@ public static class ResumesMapper
             resume.Skills.ConvertAll(s => s.ToResponse()),
             resume.Languages.ConvertAll(l => l.ToResponse()),
             resume.Courses.ConvertAll(c => c.ToResponse()),
+            resume.Projects.ConvertAll(p => p.ToResponse()),
             resume.Links.ConvertAll(l => l.ToResponse()));
     }
 
@@ -80,5 +81,11 @@ public static class ResumesMapper
     public static LinkResponse ToResponse(this Link link)
     {
         return new LinkResponse(link.Id, link.Label, link.Uri, link.Order);
+    }
+
+    public static ProjectResponse ToResponse(this Project project)
+    {
+        return new ProjectResponse(project.Id, project.Name, project.Role, project.Url, project.StartDate,
+            project.EndDate, project.Description, project.Order);
     }
 }

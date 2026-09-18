@@ -29,4 +29,6 @@ public class Resume
     public List<Language> Languages { get; set; } = [];
 
     public List<Course> Courses { get; set; } = [];
+
+    public List<Project> Projects { get; set; } = [];
 }
