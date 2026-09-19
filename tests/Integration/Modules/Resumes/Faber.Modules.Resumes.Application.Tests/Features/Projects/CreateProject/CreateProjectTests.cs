@@ -32,7 +32,7 @@ public class CreateProjectTests(WebApp app) : TestBase
         httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
         response.Id.ShouldNotBe(Guid.Empty);
         response.ResumeId.ShouldBe(resume.Id);
-        response.Role.ShouldBe(request.Role);
+        response.Tagline.ShouldBe(request.Tagline);
         response.Name.ShouldBe(request.Name);
     }
 

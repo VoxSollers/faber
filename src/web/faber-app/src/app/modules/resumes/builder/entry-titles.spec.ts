@@ -59,7 +59,7 @@ describe('EntryTitles', () => {
     expect(host.titles.resolve('unregistered', ['Developer', 'Acme'])).toBe('Developer at Acme');
   });
 
-  it('formats a project name and role with the standard entry label', () => {
+  it('formats a project name and tagline with the standard entry label', () => {
     expect(host.titles.resolve('project-1', ['Faber', 'Lead developer']))
       .toBe('Faber at Lead developer');
   });

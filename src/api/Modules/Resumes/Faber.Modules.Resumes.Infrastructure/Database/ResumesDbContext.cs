@@ -134,7 +134,9 @@ public class ResumesDbContext(DbContextOptions<ResumesDbContext> options) : DbCo
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Order).HasDefaultValue(0);
             entity.Property(x => x.Name).HasMaxLength(OneLineStringMaxLength);
-            entity.Property(x => x.Role).HasMaxLength(OneLineStringMaxLength);
+            entity.Property(x => x.Tagline)
+                .HasMaxLength(OneLineStringMaxLength)
+                .HasColumnName("role");
             entity.Property(x => x.Url).HasMaxLength(UriMaxLength);
             entity.Property(x => x.Description).HasMaxLength(DescriptionMaxLength);
         });

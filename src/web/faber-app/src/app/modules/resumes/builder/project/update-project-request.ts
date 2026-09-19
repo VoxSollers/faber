@@ -1,5 +1,5 @@
 export interface UpdateProjectRequest {
-  role: string | null;
+  tagline: string | null;
   name: string | null;
   url: string | null;
   startDate: string | null;

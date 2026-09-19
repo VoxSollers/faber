@@ -37,7 +37,7 @@ public class CreateProjectCommandHandler(
         {
             Id = Guid.NewGuid(),
             ResumeId = command.ResumeId,
-            Role = command.Role,
+            Tagline = command.Tagline,
             Name = command.Name,
             Url = command.Url,
             StartDate = command.StartDate,

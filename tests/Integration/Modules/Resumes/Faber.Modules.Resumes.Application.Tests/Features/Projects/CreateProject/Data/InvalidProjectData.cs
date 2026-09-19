@@ -23,7 +23,7 @@ public class InvalidProjectData : IEnumerable<TheoryDataRow<CreateProjectRequest
             baseRequest with { Name = new string('a', 101) });
 
         yield return new TheoryDataRow<CreateProjectRequest>(
-            baseRequest with { Role = new string('b', 101) });
+            baseRequest with { Tagline = new string('b', 101) });
     }
 
     IEnumerator IEnumerable.GetEnumerator()

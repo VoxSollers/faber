@@ -10,7 +10,7 @@ describe('ProjectsClient', () => {
 
   const resumeId = 'resume-1';
   const project = {
-    id: 'project-1', role: 'Lead developer', name: 'Faber', url: 'https://faber.example',
+    id: 'project-1', tagline: 'Lead developer', name: 'Faber', url: 'https://faber.example',
     startDate: '2025-01-01', endDate: '', description: '<p>Resume builder</p>',
   };
 

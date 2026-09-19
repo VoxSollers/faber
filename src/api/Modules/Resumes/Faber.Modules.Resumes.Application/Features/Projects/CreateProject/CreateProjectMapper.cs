@@ -8,7 +8,7 @@ public static class CreateProjectMapper
     {
         return new CreateProjectCommand(
             request.ResumeId,
-            request.Role,
+            request.Tagline,
             request.Name,
             request.Url,
             request.StartDate,
@@ -21,7 +21,7 @@ public static class CreateProjectMapper
         return new CreateProjectResponse(
             project.Id,
             project.ResumeId,
-            project.Role,
+            project.Tagline,
             project.Name,
             project.Url,
             project.StartDate,

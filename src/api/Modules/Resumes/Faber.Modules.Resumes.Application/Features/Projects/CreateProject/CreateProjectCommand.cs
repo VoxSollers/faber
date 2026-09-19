@@ -5,7 +5,7 @@ namespace Faber.Modules.Resumes.Application.Features.Projects.CreateProject;
 
 public record CreateProjectCommand(
     Guid ResumeId,
-    string? Role,
+    string? Tagline,
     string? Name,
     string? Url,
     DateOnly? StartDate,

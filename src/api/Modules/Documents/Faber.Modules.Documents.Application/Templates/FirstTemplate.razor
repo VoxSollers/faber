@@ -453,7 +453,7 @@
                 <div class="title-right">@TemplateStrings.Projects</div>
                 @foreach (var project in Resume.Projects)
                 {
-                    <div class="sub-title-right">@project.Name, @project.Role</div>
+                    <div class="sub-title-right">@project.Name, @project.Tagline</div>
                     @if (IsHttpUrl(project.Url))
                     {
                         <a href="@project.Url">@project.Url</a>

@@ -9,7 +9,13 @@ import { FbField } from '../../../../shared/components/fb-field/fb-field';
 import { FbDatePicker } from '../../../../shared/components/fb-date-picker/fb-date-picker';
 import { FbRichText } from '../../../../shared/components/fb-rich-text/fb-rich-text';
 import { dateRangeValidator } from '../../../../shared/validators/date-range.validator';
-import { EntryTitles } from '../entry-titles';
+import { EntryTitles, TitleFormatter } from '../entry-titles';
+
+const projectTitleFormatter: TitleFormatter = parts =>
+  parts
+    .map(part => part?.trim() ?? '')
+    .filter(part => part.length > 0)
+    .join(' — ');
 
 @Component({
   selector: 'app-project',
@@ -27,7 +33,7 @@ export class Project {
   protected readonly titles = new EntryTitles(this.destroyRef);
 
   protected readonly projectTitle = (item: ProjectModel): string =>
-    this.titles.resolve(item.id, [item.name, item.role]);
+    this.titles.resolve(item.id, [item.name, item.tagline], projectTitleFormatter);
 
   protected getForm(item: ProjectModel) {
     if (!this.formMap.has(item.id)) {
@@ -35,7 +41,7 @@ export class Project {
       form.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(value => this.store.updateProject({ id: item.id, ...(value as UpdateProjectRequest) }));
-      this.titles.register(item.id, form, ['name', 'role']);
+      this.titles.register(item.id, form, ['name', 'tagline'], projectTitleFormatter);
       this.formMap.set(item.id, form);
     }
     return this.formMap.get(item.id)!;
@@ -53,7 +59,7 @@ export class Project {
     return this.fb.group(
       {
         name: [item.name ?? ''],
-        role: [item.role ?? ''],
+        tagline: [item.tagline ?? ''],
         url: [item.url ?? ''],
         startDate: [item.startDate ?? ''],
         endDate: [item.endDate ?? ''],

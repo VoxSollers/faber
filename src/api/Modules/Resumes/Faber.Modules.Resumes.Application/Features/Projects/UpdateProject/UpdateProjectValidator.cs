@@ -11,8 +11,8 @@ public class UpdateProjectValidator : Validator<UpdateProjectRequest>
         RuleFor(x => x.Name)
             .MaximumLength(100).WithMessage("'Name' must not exceed 100 characters.");
 
-        RuleFor(x => x.Role)
-            .MaximumLength(100).WithMessage("'Role' must not exceed 100 characters.");
+        RuleFor(x => x.Tagline)
+            .MaximumLength(100).WithMessage("'Tagline' must not exceed 100 characters.");
 
         RuleFor(x => x.Description)
             .Must(description => HtmlContentSanitizer.GetPlainTextLength(description) <= 1000)

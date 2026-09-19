@@ -7,7 +7,7 @@ public static class UpdateProjectMapper
         return new UpdateProjectCommand(
             request.Id,
             request.ResumeId,
-            request.Role,
+            request.Tagline,
             request.Name,
             request.Url,
             request.StartDate,

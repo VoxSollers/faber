@@ -49,7 +49,7 @@ public class GetProjectTests(WebApp app) : TestBase
 
         httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
         getResponse.Id.ShouldBe(projectResponse.Id);
-        getResponse.Role.ShouldBe(createRequest.Role);
+        getResponse.Tagline.ShouldBe(createRequest.Tagline);
         getResponse.Name.ShouldBe(createRequest.Name);
     }
 

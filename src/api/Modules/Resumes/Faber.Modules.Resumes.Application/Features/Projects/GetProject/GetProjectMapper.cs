@@ -14,7 +14,7 @@ public static class GetProjectMapper
         return new GetProjectResponse(
             project.Id,
             project.ResumeId,
-            project.Role,
+            project.Tagline,
             project.Name,
             project.Url,
             project.StartDate,

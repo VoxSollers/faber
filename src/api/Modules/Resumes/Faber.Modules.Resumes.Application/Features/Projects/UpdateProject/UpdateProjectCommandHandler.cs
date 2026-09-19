@@ -28,7 +28,7 @@ public class UpdateProjectCommandHandler(
             return Error.NotFound("Project.NotFound", $"Project with id '{command.Id}' was not found");
         }
 
-        project.Role = command.Role;
+        project.Tagline = command.Tagline;
         project.Name = command.Name;
         project.Url = command.Url;
         project.StartDate = command.StartDate;

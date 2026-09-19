@@ -16,11 +16,11 @@ describe('Project', () => {
 
   const seed: ProjectModel[] = [
     {
-      id: 'p1', order: 0, name: 'Faber', role: 'Lead developer', url: 'https://faber.example',
+      id: 'p1', order: 0, name: 'Faber', tagline: 'SaaS resume builder', url: 'https://faber.example',
       startDate: '2025-01-01', endDate: '', description: '<p>Resume builder</p>',
     },
     {
-      id: 'p2', order: 1, name: 'Portfolio', role: 'Designer', url: '',
+      id: 'p2', order: 1, name: 'Portfolio', tagline: 'Designer', url: '',
       startDate: '', endDate: '', description: '',
     },
   ];
@@ -44,10 +44,10 @@ describe('Project', () => {
     expect(fixture.nativeElement.querySelector('fb-field[type="url"]')).toBeTruthy();
   });
 
-  it('labels a project with its name and role', () => {
+  it('labels a project with its name and tagline', () => {
     const title = fixture.componentInstance['projectTitle'];
-    expect(title(seed[0])).toBe('Faber at Lead developer');
-    expect(title({ ...seed[0], name: '', role: 'Designer' })).toBe('Designer');
+    expect(title(seed[0])).toBe('Faber — SaaS resume builder');
+    expect(title({ ...seed[0], name: '', tagline: 'Designer' })).toBe('Designer');
   });
 
   it('forwards form changes to the confirmed-state store action', () => {

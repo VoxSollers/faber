@@ -24,7 +24,7 @@ public class UpdateProjectTests(WebApp app) : TestBase
 
         var httpResponse = await app.Client
             .PUTAsync<UpdateProjectEndpoint, UpdateProjectRequest>(
-                new UpdateProjectRequest(Guid.NewGuid(), Guid.NewGuid(), "Role", "Project", null, null, null, null));
+                new UpdateProjectRequest(Guid.NewGuid(), Guid.NewGuid(), "Tagline", "Project", null, null, null, null));
 
         httpResponse.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
@@ -48,7 +48,7 @@ public class UpdateProjectTests(WebApp app) : TestBase
         var updateRequest = new UpdateProjectRequest(
             projectResponse.Id,
             resume.Id,
-            updated.Role,
+            updated.Tagline,
             updated.Name,
             updated.Url,
             updated.StartDate,
@@ -66,7 +66,7 @@ public class UpdateProjectTests(WebApp app) : TestBase
             .GETAsync<GetProjectEndpoint, GetProjectRequest, GetProjectResponse>(
                 new GetProjectRequest(resume.Id, projectResponse.Id));
 
-        getResponse.Role.ShouldBe(updated.Role);
+        getResponse.Tagline.ShouldBe(updated.Tagline);
         getResponse.Name.ShouldBe(updated.Name);
     }
 
@@ -85,7 +85,7 @@ public class UpdateProjectTests(WebApp app) : TestBase
                 new UpdateProjectRequest(
                     Guid.NewGuid(),
                     Guid.NewGuid(),
-                    project.Role,
+                    project.Tagline,
                     project.Name,
                     project.Url,
                     project.StartDate,
@@ -119,7 +119,7 @@ public class UpdateProjectTests(WebApp app) : TestBase
                 new UpdateProjectRequest(
                     projectResponse.Id,
                     resume.Id,
-                    updated.Role,
+                    updated.Tagline,
                     updated.Name,
             updated.Url,
                     updated.StartDate,

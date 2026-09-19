@@ -6,7 +6,7 @@ namespace Faber.Modules.Resumes.Application.Features.Projects.UpdateProject;
 public record UpdateProjectCommand(
     Guid Id,
     Guid ResumeId,
-    string? Role,
+    string? Tagline,
     string? Name,
     string? Url,
     DateOnly? StartDate,

@@ -5,7 +5,7 @@ public record GetAllProjectsResponse(List<GetAllProjectsItem> Items);
 public record GetAllProjectsItem(
     Guid Id,
     Guid ResumeId,
-    string? Role,
+    string? Tagline,
     string? Name,
     string? Url,
     DateOnly? StartDate,

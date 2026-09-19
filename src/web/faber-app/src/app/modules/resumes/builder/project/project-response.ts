@@ -1,7 +1,7 @@
 import { Orderly } from '../../orderly';
 
 export interface Project extends Orderly {
-  role: string | null;
+  tagline: string | null;
   name: string | null;
   url: string | null;
   startDate: string | null;

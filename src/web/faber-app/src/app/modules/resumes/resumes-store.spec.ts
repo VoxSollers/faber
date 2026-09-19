@@ -63,7 +63,7 @@ describe('ResumesStore projects', () => {
   let httpMock: HttpTestingController;
 
   const project = {
-    id: 'project-1', order: 0, role: 'Lead developer', name: 'Faber', url: 'https://faber.example',
+    id: 'project-1', order: 0, tagline: 'SaaS resume builder', name: 'Faber', url: 'https://faber.example',
     startDate: '2025-01-01', endDate: '', description: '<p>Resume builder</p>',
   };
 

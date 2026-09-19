@@ -85,7 +85,7 @@ public static class ResumesMapper
 
     public static ProjectResponse ToResponse(this Project project)
     {
-        return new ProjectResponse(project.Id, project.Name, project.Role, project.Url, project.StartDate,
+        return new ProjectResponse(project.Id, project.Name, project.Tagline, project.Url, project.StartDate,
             project.EndDate, project.Description, project.Order);
     }
 }

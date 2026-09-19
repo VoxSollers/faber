@@ -18,7 +18,7 @@ public class InvalidUpdateProjectData : IEnumerable<TheoryDataRow<UpdateProjectR
             new UpdateProjectRequest(
                 Guid.NewGuid(),
                 Guid.Empty,
-                baseRequest.Role,
+                baseRequest.Tagline,
                 baseRequest.Name,
                 baseRequest.Url,
                 new DateOnly(2023, 6, 1),
@@ -29,7 +29,7 @@ public class InvalidUpdateProjectData : IEnumerable<TheoryDataRow<UpdateProjectR
             new UpdateProjectRequest(
                 Guid.NewGuid(),
                 Guid.Empty,
-                baseRequest.Role,
+                baseRequest.Tagline,
                 baseRequest.Name,
                 baseRequest.Url,
                 baseRequest.StartDate,
@@ -40,7 +40,7 @@ public class InvalidUpdateProjectData : IEnumerable<TheoryDataRow<UpdateProjectR
             new UpdateProjectRequest(
                 Guid.NewGuid(),
                 Guid.Empty,
-                baseRequest.Role,
+                baseRequest.Tagline,
                 new string('a', NameMaxLength + 1),
                 baseRequest.Url,
                 baseRequest.StartDate,

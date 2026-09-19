@@ -3,7 +3,7 @@ namespace Faber.Modules.Resumes.Application.Features.Projects.CreateProject;
 public record CreateProjectResponse(
     Guid Id,
     Guid ResumeId,
-    string? Role,
+    string? Tagline,
     string? Name,
     string? Url,
     DateOnly? StartDate,
