@@ -2,8 +2,8 @@ using ErrorOr;
 using Faber.Modules.Documents.Application.Templates;
 using Faber.Modules.Documents.PublicApi;
 using Faber.Modules.Resumes.Application.Caching;
-using FastEndpoints;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Faber.Modules.Resumes.Application.Features.Documents.Shared;
@@ -13,8 +13,8 @@ namespace Faber.Modules.Resumes.Application.Features.Documents.Shared;
 /// single render per resume/template/user until the resume's cache tag is invalidated.
 /// </summary>
 public class ResumePdfCache(
+    IServiceScopeFactory scopeFactory,
     HybridCache cache,
-    IDocumentsModuleApi documentsModuleApi,
     ILogger<ResumePdfCache> logger)
 {
     private const string ServiceName = nameof(ResumePdfCache);
@@ -32,7 +32,17 @@ public class ResumePdfCache(
             ResumesCacheKeys.Pdf(userId, resumeId, typeof(FirstTemplate)),
             async cacheCt =>
             {
-                var result = await new DocumentCommand(resumeId, userId).ExecuteAsync(cacheCt);
+                // HybridCache runs this factory once for every concurrent caller of the same key and
+                // only cancels it once all callers have cancelled. If the factory closed over the first
+                // caller's request-scoped services (DbContext, module API), that caller's scope
+                // disposing (e.g. on request abort) would dispose them out from under every other
+                // caller still waiting on the shared factory. Owning a dedicated scope — and running
+                // DocumentCommandHandler directly instead of the FastEndpoints command bus, which
+                // resolves from the current request's services — keeps the factory alive independent
+                // of any single caller's request lifetime.
+                await using var scope = scopeFactory.CreateAsyncScope();
+                var handler = ActivatorUtilities.CreateInstance<DocumentCommandHandler>(scope.ServiceProvider);
+                var result = await handler.ExecuteAsync(new DocumentCommand(resumeId, userId), cacheCt);
 
                 if (result.IsError)
                 {
@@ -47,6 +57,7 @@ public class ResumePdfCache(
                 var resume = result.Value;
                 var parameters = new Dictionary<string, object?> { { "Resume", resume } };
 
+                var documentsModuleApi = scope.ServiceProvider.GetRequiredService<IDocumentsModuleApi>();
                 var stream = await documentsModuleApi.RenderToPdfAsync<FirstTemplate>(parameters, cacheCt);
 
                 await using var _ = stream;
