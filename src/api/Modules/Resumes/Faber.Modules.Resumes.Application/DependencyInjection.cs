@@ -1,4 +1,5 @@
 using Faber.Modules.Resumes.Application.Authorization;
+using Faber.Modules.Resumes.Application.Caching;
 using Faber.Modules.Resumes.Application.Options;
 using Faber.Modules.Resumes.Infrastructure.Database;
 using Faber.Modules.Resumes.PublicApi;
@@ -17,6 +18,8 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddScoped<IResumesModuleApi, ResumesModuleApi>();
+
+        services.AddScoped<ResumesCacheInvalidationInterceptor>();
 
         services.ConfigureOptions<ResumeLimitsOptionsSetup>();
         services.AddScoped<IAuthorizationHandler, MaxResumeCreationHandler>();
@@ -67,7 +70,7 @@ public static class DependencyInjection
             connectionString = $"Host={host};Port={port};Database={name};Username={username};Password={password}";
         }
 
-        services.AddDbContext<ResumesDbContext>(o => o
+        services.AddDbContext<ResumesDbContext>((sp, o) => o
             .UseNpgsql(
                 connectionString,
                 npgsqlOptions =>
@@ -75,6 +78,7 @@ public static class DependencyInjection
                         DbConstants.MigrationsHistoryTableName,
                         DbConstants.SchemaName))
             .UseSnakeCaseNamingConvention()
+            .AddInterceptors(sp.GetRequiredService<ResumesCacheInvalidationInterceptor>())
         );
     }
 }
