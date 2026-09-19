@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Net;
 using Faber.Modules.Resumes.Application.Features.Documents.DownloadDocument;
 using Faber.Modules.Resumes.Application.Features.Documents.Shared;
@@ -11,7 +10,11 @@ using Faber.Modules.Resumes.Application.Tests.Features.Shared.Data;
 using Faber.Testing.Shared.Http;
 using FastEndpoints;
 using FastEndpoints.Testing;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Shouldly;
+using StackExchange.Redis;
 
 namespace Faber.Modules.Resumes.Application.Tests.Features.Resumes.Caching;
 
@@ -19,12 +22,6 @@ namespace Faber.Modules.Resumes.Application.Tests.Features.Resumes.Caching;
 [Priority(92)]
 public class RedisUnavailableTests(RedisUnavailableWebApp app) : TestBase
 {
-    /// <summary>
-    /// Generously above expected latency but well under the StackExchange 5 s backlog default, so a
-    /// regression to "queue requests until Redis times out" gets caught without a flaky assertion.
-    /// </summary>
-    private static readonly TimeSpan MaximumRequestDuration = TimeSpan.FromSeconds(3);
-
     [Fact]
     public async Task GetResume_RedisDown_ShouldReturnResume()
     {
@@ -32,17 +29,33 @@ public class RedisUnavailableTests(RedisUnavailableWebApp app) : TestBase
         var accessToken = await ResumesTestHelper.SignInAsFirstUserAsync(app.Client, ct);
         var resume = await ResumesTestHelper.CreateResumeAsync(app.Client, accessToken, ct: ct);
 
-        var stopwatch = Stopwatch.StartNew();
-
         var (response, getResponse) = await app.Client
             .WithAuthToken(accessToken)
             .GETAsync<GetResumeEndpoint, GetResumeRequest, ResumeResponse>(new GetResumeRequest(resume.Id));
 
-        stopwatch.Stop();
-
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         getResponse!.Id.ShouldBe(resume.Id);
-        stopwatch.Elapsed.ShouldBeLessThan(MaximumRequestDuration);
+    }
+
+    /// <summary>
+    /// Timing-based assertions can't catch a partial regression (e.g. removing only
+    /// <see cref="BacklogPolicy.FailFast"/> or only a timeout) reliably — a slow CI box can still
+    /// clear a generous bound. Asserting the actual <see cref="ConfigurationOptions"/> registered
+    /// for the Redis L2 store is deterministic instead.
+    /// </summary>
+    [Fact]
+    public void RedisCacheOptions_ShouldFailFastWhenRedisIsDown()
+    {
+        var redisCacheOptions = app.Services.GetRequiredService<IOptions<RedisCacheOptions>>().Value;
+        var configurationOptions = redisCacheOptions.ConfigurationOptions;
+
+        configurationOptions.ShouldNotBeNull();
+        configurationOptions.AbortOnConnectFail.ShouldBeFalse();
+        configurationOptions.BacklogPolicy.ShouldBe(BacklogPolicy.FailFast);
+        configurationOptions.ConnectTimeout.ShouldBeLessThanOrEqualTo(1000);
+        configurationOptions.SyncTimeout.ShouldBeLessThanOrEqualTo(1000);
+        configurationOptions.AsyncTimeout.ShouldBeLessThanOrEqualTo(1000);
+        redisCacheOptions.InstanceName.ShouldBe("faber:");
     }
 
     [Fact]
@@ -83,15 +96,10 @@ public class RedisUnavailableTests(RedisUnavailableWebApp app) : TestBase
             .POSTAsync<CreatePersonEndpoint, CreatePersonRequest, CreatePersonResponse>(
                 new CreatePersonRequestFaker(resume.Id).Generate());
 
-        var stopwatch = Stopwatch.StartNew();
-
         var downloadResponse = await app.Client
             .WithAuthToken(accessToken)
             .GETAsync<DownloadDocumentEndpoint, DocumentRequest>(new DocumentRequest(resume.Id));
 
-        stopwatch.Stop();
-
         downloadResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-        stopwatch.Elapsed.ShouldBeLessThan(MaximumRequestDuration);
     }
 }
