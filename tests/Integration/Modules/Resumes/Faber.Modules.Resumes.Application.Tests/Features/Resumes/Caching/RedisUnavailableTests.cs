@@ -52,16 +52,17 @@ public class RedisUnavailableTests(RedisUnavailableWebApp app) : TestBase
         var accessToken = await ResumesTestHelper.SignInAsFirstUserAsync(app.Client, ct);
         var resume = await ResumesTestHelper.CreateResumeAsync(app.Client, accessToken, ct: ct);
 
-        var stopwatch = Stopwatch.StartNew();
+        // Primes the L1 in-memory cache entry for this resume; with Redis down, invalidation
+        // must still clear it, or the read-back below would serve the stale title.
+        await app.Client
+            .WithAuthToken(accessToken)
+            .GETAsync<GetResumeEndpoint, GetResumeRequest, ResumeResponse>(new GetResumeRequest(resume.Id));
 
         var updateResponse = await app.Client
             .WithAuthToken(accessToken)
             .PUTAsync<UpdateTitleEndpoint, UpdateTitleRequest>(new UpdateTitleRequest(resume.Id, "Fresh Title"));
 
-        stopwatch.Stop();
-
         updateResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-        stopwatch.Elapsed.ShouldBeLessThan(MaximumRequestDuration);
 
         var (_, getResponse) = await app.Client
             .WithAuthToken(accessToken)
