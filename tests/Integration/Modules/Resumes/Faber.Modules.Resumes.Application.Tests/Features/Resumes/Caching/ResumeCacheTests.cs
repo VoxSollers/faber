@@ -21,7 +21,7 @@ using Shouldly;
 namespace Faber.Modules.Resumes.Application.Tests.Features.Resumes.Caching;
 
 [Collection<CollectionResumes>]
-[Priority(50)]
+[Priority(90)]
 public class ResumeCacheTests(WebApp app) : TestBase
 {
     [Fact]

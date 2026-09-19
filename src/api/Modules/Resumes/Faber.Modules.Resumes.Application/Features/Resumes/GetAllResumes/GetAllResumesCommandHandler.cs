@@ -39,7 +39,7 @@ public class GetAllResumesCommandHandler(
                     .ToListAsync(cacheCt);
 
                 logger.LogInformation(
-                    "[SUCCESS] {HandlerName} | Found {Count} resumes in the database for {UserId}",
+                    "[STEP] {HandlerName} | Found {Count} resumes in the database for {UserId}",
                     HandlerName,
                     resumes.Count,
                     command.UserId);
@@ -48,6 +48,12 @@ public class GetAllResumesCommandHandler(
             },
             tags: [ResumesCacheKeys.UserResumesTag(command.UserId)],
             cancellationToken: ct);
+
+        logger.LogInformation(
+            "[SUCCESS] {HandlerName} | Found {Count} resumes for {UserId}",
+            HandlerName,
+            response.Items.Count,
+            command.UserId);
 
         return response;
     }
