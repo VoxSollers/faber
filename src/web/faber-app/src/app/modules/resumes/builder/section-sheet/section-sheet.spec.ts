@@ -43,7 +43,7 @@ describe('SectionSheet', () => {
 
   it('lists every builder section', () => {
     expect(sectionButtons().length).toBe(SECTION_SHEET_ITEMS.length);
-    expect(sectionButtons().length).toBe(9);
+    expect(sectionButtons().length).toBe(10);
     expect(sectionButtons()[0].textContent?.trim()).toBe('Personal Details');
   });
 

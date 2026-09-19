@@ -13,4 +13,5 @@ public record ResumeResponse(
     List<SkillResponse> Skills,
     List<LanguageResponse> Languages,
     List<CourseResponse> Courses,
+    List<ProjectResponse> Projects,
     List<LinkResponse> Links);

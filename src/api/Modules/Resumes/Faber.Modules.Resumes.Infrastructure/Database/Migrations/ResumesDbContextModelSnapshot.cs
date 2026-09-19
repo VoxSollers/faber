@@ -18,7 +18,7 @@ namespace Faber.Modules.Resumes.Infrastructure.Database.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("resumes")
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -337,6 +337,60 @@ namespace Faber.Modules.Resumes.Infrastructure.Database.Migrations
                     b.ToTable("personal_details", "resumes");
                 });
 
+            modelBuilder.Entity("Faber.Modules.Resumes.Domain.Entities.Project", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date")
+                        .HasColumnName("end_date");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Order")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("order");
+
+                    b.Property<Guid>("ResumeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("resume_id");
+
+                    b.Property<string>("Role")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("role");
+
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("start_date");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(2083)
+                        .HasColumnType("character varying(2083)")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id")
+                        .HasName("pk_projects");
+
+                    b.HasIndex("ResumeId")
+                        .HasDatabaseName("ix_projects_resume_id");
+
+                    b.ToTable("projects", "resumes");
+                });
+
             modelBuilder.Entity("Faber.Modules.Resumes.Domain.Entities.Resume", b =>
                 {
                     b.Property<Guid>("Id")
@@ -491,6 +545,18 @@ namespace Faber.Modules.Resumes.Infrastructure.Database.Migrations
                     b.Navigation("Resume");
                 });
 
+            modelBuilder.Entity("Faber.Modules.Resumes.Domain.Entities.Project", b =>
+                {
+                    b.HasOne("Faber.Modules.Resumes.Domain.Entities.Resume", "Resume")
+                        .WithMany("Projects")
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_projects_resumes_resume_id");
+
+                    b.Navigation("Resume");
+                });
+
             modelBuilder.Entity("Faber.Modules.Resumes.Domain.Entities.Skill", b =>
                 {
                     b.HasOne("Faber.Modules.Resumes.Domain.Entities.Resume", "Resume")
@@ -516,6 +582,8 @@ namespace Faber.Modules.Resumes.Infrastructure.Database.Migrations
                     b.Navigation("Links");
 
                     b.Navigation("Person");
+
+                    b.Navigation("Projects");
 
                     b.Navigation("Skills");
                 });

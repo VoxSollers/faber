@@ -26,7 +26,7 @@ export interface SectionSheetItem {
 }
 
 /**
- * The builder's nine sections, in editor order. Shared by the desktop rail and
+ * The builder's ten sections, in editor order. Shared by the desktop rail and
  * the mobile sheet so the two lists cannot drift apart.
  */
 export const SECTION_SHEET_ITEMS: readonly SectionSheetItem[] = [
@@ -38,6 +38,7 @@ export const SECTION_SHEET_ITEMS: readonly SectionSheetItem[] = [
   { id: 'language',   label: 'Languages',            icon: 'globe' },
   { id: 'link',       label: 'Links',                icon: 'link-2' },
   { id: 'course',     label: 'Courses',              icon: 'book-open' },
+  { id: 'project',    label: 'Projects',             icon: 'briefcase' },
   { id: 'hobby',      label: 'Hobbies',              icon: 'heart' },
 ];
 

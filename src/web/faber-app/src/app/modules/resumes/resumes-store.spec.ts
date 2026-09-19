@@ -26,6 +26,7 @@ function resume(overrides: Partial<Resume> = {}): Resume {
     experience: [],
     educations: [],
     courses: [],
+    projects: [],
     links: [],
     skills: [],
     languages: [],
@@ -56,6 +57,56 @@ function flushRateLimited(req: TestRequest): void {
     { status: 429, statusText: 'Too Many Requests', headers: { 'Retry-After': '1' } },
   );
 }
+
+describe('ResumesStore projects', () => {
+  let store: ResumesStore;
+  let httpMock: HttpTestingController;
+
+  const project = {
+    id: 'project-1', order: 0, tagline: 'SaaS resume builder', name: 'Faber', url: 'https://faber.example',
+    startDate: '2025-01-01', endDate: '', description: '<p>Resume builder</p>',
+  };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    TestBed.configureTestingModule({
+      providers: [ResumesStore, provideHttpClient(), provideHttpClientTesting()],
+    });
+    store = TestBed.inject(ResumesStore);
+    httpMock = TestBed.inject(HttpTestingController);
+    store.loadResume(RESUME_ID);
+    httpMock.expectOne(API_ROUTES.resumes.byId(RESUME_ID)).flush(resume({ projects: [project] }));
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+    vi.useRealTimers();
+  });
+
+  it('adds a project only after the server returns it', () => {
+    store.addProject();
+    expect(store.projects()).toEqual([project]);
+
+    httpMock.expectOne(API_ROUTES.resumes.projects.root(RESUME_ID)).flush({
+      ...project,
+      id: 'project-2',
+      order: 1,
+    });
+    expect(store.projects()).toHaveLength(2);
+  });
+
+  it('updates a project only after the debounced server request succeeds', () => {
+    store.updateProject({ ...project, name: 'Faber CV' });
+    expect(store.projects()[0].name).toBe('Faber');
+
+    vi.advanceTimersByTime(DEBOUNCE_MS);
+    const request = httpMock.expectOne(API_ROUTES.resumes.projects.byId(RESUME_ID, project.id));
+    expect(request.request.body).toMatchObject({ name: 'Faber CV' });
+    request.flush(null);
+
+    expect(store.projects()[0].name).toBe('Faber CV');
+  });
+});
 
 describe('ResumesStore rate-limit resilience', () => {
   let store: ResumesStore;

@@ -24,6 +24,9 @@ import { UpdateLinkRequest } from './builder/link/update-link-request';
 import { CoursesClient } from './builder/course/courses-client';
 import { Course } from './builder/course/course-response';
 import { UpdateCourseRequest } from './builder/course/update-course-request';
+import { ProjectsClient } from './builder/project/projects-client';
+import { Project } from './builder/project/project-response';
+import { UpdateProjectRequest } from './builder/project/update-project-request';
 import { base64ToBlob } from '../../shared/utils/file-utils';
 import { isRateLimited, retryOnRateLimit } from '../../shared/utils/rate-limit';
 
@@ -114,6 +117,7 @@ export class ResumesStore {
   private readonly languagesClient = inject(LanguagesClient);
   private readonly linksClient = inject(LinksClient);
   private readonly coursesClient = inject(CoursesClient);
+  private readonly projectsClient = inject(ProjectsClient);
 
   private readonly state = signal<Resume | null>(null);
   private readonly previewDocumentSignal = signal<PreviewDocument | null>(null);
@@ -199,6 +203,7 @@ export class ResumesStore {
   readonly languages = computed(() => this.state()?.languages ?? []);
   readonly links = computed(() => this.state()?.links ?? []);
   readonly courses = computed(() => this.state()?.courses ?? []);
+  readonly projects = computed(() => this.state()?.projects ?? []);
 
   private readonly previewRefresh$ = new Subject<PreviewRequest | null>();
 
@@ -1107,6 +1112,71 @@ export class ResumesStore {
       ),
       () => undefined,
       'Failed to reorder courses.',
+    );
+  }
+
+  // Projects
+  // Project endpoints return the created resource only for POST. For the 204
+  // mutations, apply the server-confirmed request only after it succeeds.
+  addProject(): void {
+    const resume = this.state();
+    if (!resume) return;
+    this.queueImmediateSave(
+      'project:add',
+      () => this.projectsClient.create(resume.id),
+      item => this.state.update(r => r ? { ...r, projects: [...r.projects, item] } : r),
+      'Failed to add project.',
+    );
+  }
+
+  updateProject(data: UpdateProjectRequest & { id: string }): void {
+    const resume = this.state();
+    if (!resume) return;
+    const payload = {
+      ...data,
+      startDate: data.startDate || null,
+      endDate: data.endDate || null,
+      url: data.url?.trim() || null,
+    };
+    this.queueDebouncedSave(
+      `project:${data.id}`,
+      () => this.projectsClient.update(resume.id, payload),
+      () => this.state.update(r => r ? {
+        ...r,
+        projects: r.projects.map(project => project.id === data.id
+          ? { ...project, ...payload } as Project
+          : project),
+      } : r),
+      'Failed to save project.',
+    );
+  }
+
+  deleteProject(item: Orderly): void {
+    const resume = this.state();
+    if (!resume) return;
+    this.queueImmediateSave(
+      `project:${item.id}`,
+      () => this.projectsClient.delete(resume.id, item.id),
+      () => this.state.update(r => r ? {
+        ...r,
+        projects: r.projects.filter(project => project.id !== item.id),
+      } : r),
+      'Failed to delete project.',
+      true,
+    );
+  }
+
+  reorderProjects(event: CdkDragDrop<Orderly[]>): void {
+    const resume = this.state();
+    if (!resume) return;
+    const list = [...resume.projects];
+    moveItemInArray(list, event.previousIndex, event.currentIndex);
+    const reindexed = list.map((project, index) => ({ ...project, order: index }));
+    this.queueImmediateSave(
+      'project:reorder',
+      () => this.projectsClient.reorder(resume.id, reindexed.map(project => project.id)),
+      () => this.state.update(r => r ? { ...r, projects: reindexed } : r),
+      'Failed to reorder projects.',
     );
   }
 }

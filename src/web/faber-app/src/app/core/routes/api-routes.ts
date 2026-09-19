@@ -41,6 +41,7 @@ export const API_ROUTES = {
     languages: subResource('languages'),
     links: subResource('links'),
     courses: subResource('courses'),
+    projects: subResource('projects'),
     educations: subResource('educations'),
     experience: subResource('experiences'),
   },

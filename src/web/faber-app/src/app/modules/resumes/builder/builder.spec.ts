@@ -61,6 +61,7 @@ describe('Builder', () => {
     languages: signal([]),
     links: signal([]),
     courses: signal([]),
+    projects: signal([]),
     hobbies: signal(''),
     summary: signal(''),
     localization: signal(''),
@@ -219,11 +220,11 @@ describe('Builder', () => {
       fixture.detectChanges();
     });
 
-    it('renders 9 rail section buttons', () => {
+    it('renders 10 rail section buttons', () => {
       const buttons = fixture.nativeElement
         .querySelector('nav[aria-label="Resume sections"]')
         ?.querySelectorAll('button');
-      expect(buttons?.length).toBe(9);
+      expect(buttons?.length).toBe(10);
     });
 
     it('renders rail as an island card (bg-card)', () => {

@@ -16,6 +16,8 @@ public class ResumesDbContext(DbContextOptions<ResumesDbContext> options) : DbCo
 
     public DbSet<Course> Courses => Set<Course>();
 
+    public DbSet<Project> Projects => Set<Project>();
+
     public DbSet<Link> Links => Set<Link>();
 
     public DbSet<Skill> Skills => Set<Skill>();
@@ -62,6 +64,11 @@ public class ResumesDbContext(DbContextOptions<ResumesDbContext> options) : DbCo
 
             entity
                 .HasMany(x => x.Courses)
+                .WithOne(x => x.Resume)
+                .HasForeignKey(x => x.ResumeId);
+
+            entity
+                .HasMany(x => x.Projects)
                 .WithOne(x => x.Resume)
                 .HasForeignKey(x => x.ResumeId);
 
@@ -119,6 +126,18 @@ public class ResumesDbContext(DbContextOptions<ResumesDbContext> options) : DbCo
             entity.Property(x => x.Order).HasDefaultValue(0);
             entity.Property(x => x.School).HasMaxLength(OneLineStringMaxLength);
             entity.Property(x => x.Name).HasMaxLength(OneLineStringMaxLength);
+            entity.Property(x => x.Description).HasMaxLength(DescriptionMaxLength);
+        });
+
+        modelBuilder.Entity<Project>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Order).HasDefaultValue(0);
+            entity.Property(x => x.Name).HasMaxLength(OneLineStringMaxLength);
+            entity.Property(x => x.Tagline)
+                .HasMaxLength(OneLineStringMaxLength)
+                .HasColumnName("role");
+            entity.Property(x => x.Url).HasMaxLength(UriMaxLength);
             entity.Property(x => x.Description).HasMaxLength(DescriptionMaxLength);
         });
 

@@ -98,6 +98,12 @@ namespace Faber.Modules.Documents.Application.Resources {
                 return ResourceManager.GetString("Courses", resourceCulture);
             }
         }
+
+        public static string Projects {
+            get {
+                return ResourceManager.GetString("Projects", resourceCulture);
+            }
+        }
         
         public static string DrivingLicense {
             get {

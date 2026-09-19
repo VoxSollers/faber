@@ -28,6 +28,7 @@ public class DocumentCommandHandler(
             .Include(r => r.Skills.OrderBy(s => s.Order))
             .Include(r => r.Languages.OrderBy(l => l.Order))
             .Include(r => r.Courses.OrderBy(c => c.Order))
+            .Include(r => r.Projects.OrderBy(p => p.Order))
             .Include(r => r.Links.OrderBy(l => l.Order))
             .FirstOrDefaultAsync(r => r.Id == command.ResumeId, ct);
 

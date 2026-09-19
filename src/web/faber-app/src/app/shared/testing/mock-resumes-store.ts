@@ -29,6 +29,7 @@ export function mockResumesStore(): Partial<ResumesStore> {
     languages: signal([]),
     links: signal([]),
     courses: signal([]),
+    projects: signal([]),
     loadResume: vi.fn(),
     clearError: vi.fn(),
     refreshPreview: vi.fn(),
@@ -66,5 +67,9 @@ export function mockResumesStore(): Partial<ResumesStore> {
     updateCourse: vi.fn(),
     deleteCourse: vi.fn(),
     reorderCourses: vi.fn(),
+    addProject: vi.fn(),
+    updateProject: vi.fn(),
+    deleteProject: vi.fn(),
+    reorderProjects: vi.fn(),
   } satisfies Partial<ResumesStore>;
 }

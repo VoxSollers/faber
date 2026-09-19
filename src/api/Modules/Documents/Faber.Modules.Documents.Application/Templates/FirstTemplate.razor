@@ -50,6 +50,12 @@
     {
         return details.All(string.IsNullOrEmpty);
     }
+
+    bool IsHttpUrl(string? value)
+    {
+        return Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
+               (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+    }
 }
 
 <style>
@@ -436,6 +442,42 @@
                         @if (course.Description != null)
                         {
                             @((MarkupString)course.Description)
+                        }
+                    </div>
+                }
+            </div>
+        }
+        @if (Resume?.Projects is not null && Resume.Projects.Any())
+        {
+            <div class="section-right">
+                <div class="title-right">@TemplateStrings.Projects</div>
+                @foreach (var project in Resume.Projects)
+                {
+                    <div class="sub-title-right">@project.Name, @project.Tagline</div>
+                    @if (IsHttpUrl(project.Url))
+                    {
+                        <a href="@project.Url">@project.Url</a>
+                    }
+                    <div class="date-interval">
+                        @if (project.StartDate is not null)
+                        {
+                            @textInfo.ToTitleCase(project.StartDate.Value.ToString(dateIntervalFormat))
+                            <span>-</span>
+                        }
+                        @if (project.EndDate is not null)
+                        {
+                            if (project.StartDate is null)
+                            {
+                                <span>-</span>
+                            }
+
+                            @textInfo.ToTitleCase(project.EndDate.Value.ToString(dateIntervalFormat))
+                        }
+                    </div>
+                    <div class="description-right">
+                        @if (project.Description is not null)
+                        {
+                            @((MarkupString)project.Description.Sanitize())
                         }
                     </div>
                 }

@@ -5,6 +5,7 @@ import { Skill } from './builder/skill/skill-response';
 import { Language } from './builder/language/language-response';
 import { Link } from './builder/link/link-response';
 import { Course } from './builder/course/course-response';
+import { Project } from './builder/project/project-response';
 
 export interface Resume {
   id: string;
@@ -17,6 +18,7 @@ export interface Resume {
   experience: Experience[];
   educations: Education[];
   courses: Course[];
+  projects: Project[];
   links: Link[];
   skills: Skill[];
   languages: Language[];

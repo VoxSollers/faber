@@ -60,8 +60,8 @@ describe('SectionList', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render 9 section rows', () => {
-    expect(getItems().length).toBe(9);
+  it('should render 10 section rows', () => {
+    expect(getItems().length).toBe(10);
   });
 
   it('should have role="list" on the accordion container', () => {

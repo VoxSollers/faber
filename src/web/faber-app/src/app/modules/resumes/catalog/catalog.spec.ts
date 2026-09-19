@@ -19,6 +19,7 @@ const mockResume: Resume = {
   experience: [],
   educations: [],
   courses: [],
+  projects: [],
   links: [],
   skills: [],
   languages: [],
