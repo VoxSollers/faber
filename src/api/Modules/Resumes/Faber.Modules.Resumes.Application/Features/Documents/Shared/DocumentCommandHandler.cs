@@ -30,7 +30,7 @@ public class DocumentCommandHandler(
             .Include(r => r.Courses.OrderBy(c => c.Order))
             .Include(r => r.Projects.OrderBy(p => p.Order))
             .Include(r => r.Links.OrderBy(l => l.Order))
-            .FirstOrDefaultAsync(r => r.Id == command.ResumeId, ct);
+            .FirstOrDefaultAsync(r => r.Id == command.ResumeId && r.UserId == command.UserId, ct);
 
         if (resume is null)
         {

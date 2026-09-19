@@ -1,5 +1,6 @@
 using Faber.Modules.Resumes.Application.Authorization;
 using Faber.Modules.Resumes.Application.Caching;
+using Faber.Modules.Resumes.Application.Features.Documents.Shared;
 using Faber.Modules.Resumes.Application.Options;
 using Faber.Modules.Resumes.Infrastructure.Database;
 using Faber.Modules.Resumes.PublicApi;
@@ -20,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<IResumesModuleApi, ResumesModuleApi>();
 
         services.AddScoped<ResumesCacheInvalidationInterceptor>();
+        services.AddScoped<ResumePdfCache>();
 
         services.ConfigureOptions<ResumeLimitsOptionsSetup>();
         services.AddScoped<IAuthorizationHandler, MaxResumeCreationHandler>();
