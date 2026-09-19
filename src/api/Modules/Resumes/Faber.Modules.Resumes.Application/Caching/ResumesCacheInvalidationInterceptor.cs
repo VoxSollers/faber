@@ -61,7 +61,7 @@ public class ResumesCacheInvalidationInterceptor(
         int result,
         CancellationToken cancellationToken = default)
     {
-        await InvalidatePendingTagsAsync(cancellationToken);
+        await InvalidatePendingTagsAsync();
 
         return await base.SavedChangesAsync(eventData, result, cancellationToken);
     }
@@ -203,7 +203,7 @@ public class ResumesCacheInvalidationInterceptor(
         }
     }
 
-    private async ValueTask InvalidatePendingTagsAsync(CancellationToken ct)
+    private async ValueTask InvalidatePendingTagsAsync()
     {
         var tags = _pendingTags;
         _pendingTags = null;
@@ -215,7 +215,10 @@ public class ResumesCacheInvalidationInterceptor(
 
         try
         {
-            await cache.RemoveByTagAsync(tags, ct);
+            // The write already committed; a request-aborted token must never stop us from
+            // invalidating the cache for a change that already happened, or stale data would be
+            // served until TTL expiry.
+            await cache.RemoveByTagAsync(tags, CancellationToken.None);
         }
         catch (Exception ex)
         {
