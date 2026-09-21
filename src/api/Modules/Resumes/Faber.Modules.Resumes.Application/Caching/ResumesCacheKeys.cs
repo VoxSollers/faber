@@ -64,12 +64,19 @@ public static class ResumesCacheKeys
     /// all-lowercase, hyphen/colon shape of the rest of the cache key (e.g. "FirstTemplate"
     /// becomes "first-template"). Runs of consecutive capitals, such as an acronym, are kept
     /// together instead of being hyphenated letter by letter (e.g. "PdfATSTemplate" becomes
-    /// "pdf-ats-template", not "pdf-a-t-s-template").
+    /// "pdf-ats-template", not "pdf-a-t-s-template"). Because casing inside an acronym run is
+    /// discarded, two type names that differ only there (e.g. "PdfAts" vs "PdfATS") normalise to
+    /// the same segment and would collide in a single cache key.
     /// </summary>
     /// <param name="name">The PascalCase type name to convert.</param>
     /// <returns>The kebab-case equivalent of <paramref name="name"/>.</returns>
     private static string ToKebabCase(string name)
     {
+        if (name.Length == 0)
+        {
+            return name;
+        }
+
         Span<char> buffer = stackalloc char[(name.Length * 2) - 1];
         var position = 0;
 
