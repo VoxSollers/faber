@@ -40,7 +40,7 @@ public static class ResumesCacheKeys
     {
         var templateBuild = template.Assembly.ManifestModule.ModuleVersionId;
 
-        return $"resumes:{Build}:user:{userId}:pdf:{resumeId}:{template.Name}:{templateBuild}";
+        return $"resumes:{Build}:user:{userId}:pdf:{resumeId}:{ToKebabCase(template.Name)}:{templateBuild}";
     }
 
     /// <summary>Builds the cache tag shared by every cache entry derived from a single resume.</summary>
@@ -57,5 +57,36 @@ public static class ResumesCacheKeys
     public static string UserResumesTag(Guid userId)
     {
         return $"user:{userId}:resumes";
+    }
+
+    /// <summary>
+    /// Converts a PascalCase type name to kebab-case so the template segment matches the
+    /// all-lowercase, hyphen/colon shape of the rest of the cache key (e.g. "FirstTemplate"
+    /// becomes "first-template"). Runs of consecutive capitals, such as an acronym, are kept
+    /// together instead of being hyphenated letter by letter (e.g. "PdfATSTemplate" becomes
+    /// "pdf-ats-template", not "pdf-a-t-s-template").
+    /// </summary>
+    /// <param name="name">The PascalCase type name to convert.</param>
+    /// <returns>The kebab-case equivalent of <paramref name="name"/>.</returns>
+    private static string ToKebabCase(string name)
+    {
+        Span<char> buffer = stackalloc char[(name.Length * 2) - 1];
+        var position = 0;
+
+        for (var i = 0; i < name.Length; i++)
+        {
+            var current = name[i];
+            var isNewWord = char.IsUpper(current) && i > 0 &&
+                (char.IsLower(name[i - 1]) || (i + 1 < name.Length && char.IsLower(name[i + 1])));
+
+            if (isNewWord)
+            {
+                buffer[position++] = '-';
+            }
+
+            buffer[position++] = char.ToLowerInvariant(current);
+        }
+
+        return new string(buffer[..position]);
     }
 }
