@@ -19,7 +19,10 @@ builder.AddVaultIntegration(options =>
     options.UnsealKeysFile = Path.Combine(vaultDir, ".vault-unseal-keys");
 });
 
-var redis = builder.AddRedis("redis", 6379);
+// RedisInsight gets a random host port: it's reached through the dashboard link, not a fixed
+// address, so it doesn't need a slot in this file's hard-pinned port list.
+var redis = builder.AddRedis("redis", 6379)
+    .WithRedisInsight();
 
 var postgresUser = builder.AddParameter("postgres-username")
     .WithDescription(
