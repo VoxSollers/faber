@@ -59,6 +59,12 @@ public class WebApp : AppFixture<Program>
     private RedisContainer Redis =>
         _redisContainer ?? throw new InvalidOperationException("Redis container not initialized");
 
+    /// <summary>
+    /// When false, no Redis container is built or started, so a fixture that never exercises Redis
+    /// against a real instance (e.g. <see cref="RedisUnavailableWebApp"/>) doesn't pay for one.
+    /// </summary>
+    protected virtual bool UsesRedis => true;
+
     private IUserModuleApi UserModuleApi =>
         _userModuleApi ?? throw new InvalidOperationException("User module API not initialized");
 
@@ -101,15 +107,23 @@ public class WebApp : AppFixture<Program>
             .WithPortBinding(8080, true)
             .Build();
 
-        _redisContainer = new RedisBuilder()
-            .WithNetwork(_network)
-            .Build();
+        _redisContainer = UsesRedis
+            ? new RedisBuilder().WithNetwork(_network).Build()
+            : null;
 
-        await Task.WhenAll(
+        var startTasks = new List<Task>
+        {
             _postgresContainer.StartAsync(),
             _vaultContainer.StartAsync(),
-            _keycloakContainer.StartAsync(),
-            _redisContainer.StartAsync());
+            _keycloakContainer.StartAsync()
+        };
+
+        if (_redisContainer is not null)
+        {
+            startTasks.Add(_redisContainer.StartAsync());
+        }
+
+        await Task.WhenAll(startTasks);
 
         _vaultAddr = $"http://{Vault.Hostname}:{Vault.GetMappedPublicPort(8200)}";
         Environment.SetEnvironmentVariable("VAULT_TOKEN", VaultToken);
@@ -174,7 +188,11 @@ public class WebApp : AppFixture<Program>
         var keycloakBaseAddress = Keycloak.GetBaseAddress();
 
         builder.UseSetting("ConnectionStrings:faberdb", Postgres.GetConnectionString());
-        builder.UseSetting("ConnectionStrings:FaberRedis", Redis.GetConnectionString());
+
+        if (UsesRedis)
+        {
+            builder.UseSetting("ConnectionStrings:redis", Redis.GetConnectionString());
+        }
 
         builder.UseSetting("Keycloak:BaseUrl", keycloakBaseAddress);
         builder.UseSetting("Keycloak:Realm", KeycloakRealm);

@@ -1,7 +1,5 @@
 using Faber.Modules.Common.PublicApi.RateLimiting;
-using Faber.Modules.Documents.Application.Razor.Extensions;
-using Faber.Modules.Documents.Application.Templates;
-using Faber.Modules.Documents.PublicApi;
+using Faber.Modules.Identity.PublicApi;
 using Faber.Modules.Resumes.Application.Features.Documents.Shared;
 using Faber.Modules.Resumes.Application.Groups;
 using FastEndpoints;
@@ -13,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Faber.Modules.Resumes.Application.Features.Documents.GenerateDocument;
 
 public class GenerateDocumentEndpoint(
-    IDocumentsModuleApi documentsModuleApi,
+    ResumePdfCache resumePdfCache,
     ILogger<GenerateDocumentEndpoint> logger)
     : Endpoint<DocumentRequest, Results<Ok<GenerateDocumentResponse>, NotFound>>
 {
@@ -33,7 +31,8 @@ public class GenerateDocumentEndpoint(
         var path = HttpContext.Request.Path.Value;
         logger.LogInformation("[HTTP POST] {Path} started", path);
 
-        var result = await req.MapToCommand().ExecuteAsync(ct);
+        var userId = Guid.Parse(HttpContext.User.FindFirst(JwtClaimTypes.Aliases.UserId)!.Value);
+        var result = await resumePdfCache.GetOrRenderAsync(userId, req.ResumeId, ct);
 
         if (result.IsError)
         {
@@ -42,11 +41,8 @@ public class GenerateDocumentEndpoint(
             return TypedResults.NotFound();
         }
 
-        var resume = result.Value;
-        var parameters = new Dictionary<string, object?> { { "Resume", resume } };
-
-        var stream = await documentsModuleApi.RenderToPdfAsync<FirstTemplate>(parameters, ct);
-        var base64String = await stream.ToBase64StringAsync();
+        var pdf = result.Value;
+        var base64String = Convert.ToBase64String(pdf.Content);
 
         logger.LogInformation("[HTTP POST] {Path} completed successfully", path);
 

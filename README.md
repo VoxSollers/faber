@@ -108,14 +108,14 @@ Detailed conventions live in `CLAUDE.md` and the path-scoped rules under `.claud
 
 The Aspire AppHost is the canonical way to run the complete development stack:
 
-| Service   | Port      | Purpose                 |
-|-----------|-----------|-------------------------|
-| postgres  | 5432      | Database                |
-| redis     | —         | Caching/sessions        |
-| vault     | 8200      | Secrets management      |
-| keycloak  | 8080      | Identity provider       |
-| mailpit   | 8025/1025 | Email testing           |
-| faberhost | 7106      | API                     |
+| Service   | Port      | Purpose                          |
+|-----------|-----------|----------------------------------|
+| postgres  | 5432      | Database                         |
+| redis     | 6379      | Caching (resumes, rendered PDFs) |
+| vault     | 8200      | Secrets management               |
+| keycloak  | 8080      | Identity provider                |
+| mailpit   | 8025/1025 | Email testing                    |
+| faberhost | 7106      | API                              |
 
 The Aspire AppHost is the only local orchestration definition tracked in this repository. Production deployment configuration, including its Compose definition and environment files, is maintained privately in the deployment environment and is intentionally absent from the public source tree.
 

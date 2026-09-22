@@ -1,3 +1,4 @@
+using Faber.Api.Caching;
 using Faber.Api.ExceptionHandlers;
 using Faber.Api.Http;
 using Faber.Api.OpenApi;
@@ -45,6 +46,8 @@ builder.Services
 
 await builder.Services.AddIdentityModuleAsync(builder.Environment, builder.Configuration);
 await builder.Services.AddResumesModuleAsync(builder.Configuration);
+
+builder.Services.AddFaberCaching(builder.Configuration);
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

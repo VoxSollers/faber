@@ -143,7 +143,6 @@ public class WebApp : AppFixture<Program>
         var keycloakBaseAddress = Keycloak.GetBaseAddress();
 
         builder.UseSetting("ConnectionStrings:faberdb", Postgres.GetConnectionString());
-        builder.UseSetting("ConnectionStrings:FaberRedis", "localhost:9999");
 
         builder.UseSetting("Keycloak:BaseUrl", keycloakBaseAddress);
         builder.UseSetting("Keycloak:Realm", KeycloakRealm);
