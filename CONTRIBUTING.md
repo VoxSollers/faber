@@ -153,7 +153,7 @@ The Aspire AppHost is the only local orchestration definition tracked here. It i
 
 ## Running the checks
 
-Backend — build a project directly; the solution may need a newer SDK:
+Backend — build the API project (or the whole solution with `Faber.sln`):
 
 ```bash
 dotnet build src/api/Faber.Api/Faber.Api.csproj
@@ -181,36 +181,16 @@ npm test -- --watch=false
 npm run build
 ```
 
-Public-snapshot preflight (tracked files only; never scans private history) — requires Gitleaks 8.30.1, TruffleHog 3.97.4, and `jq` on PATH:
-
-```bash
-cd ../../..
-bash scripts/verify-public-snapshot.sh --preflight
-```
-
 The three images CI builds without pushing:
 
 ```bash
+cd ../../..
 docker build -f src/api/Faber.Api/Dockerfile -t faber-api:local .
 docker build -f src/api/Jobs/Faber.Migrations/Dockerfile -t faber-migrations:local .
 docker build -f src/web/faber-app/Dockerfile -t faber-web:local src/web/faber-app
 ```
 
 Integration tests use Testcontainers, so Docker must be running. On macOS with Docker Desktop the socket is usually not at the default path — `docker context inspect --format '{{.Endpoints.docker.Host}}'` prints yours; export it as `DOCKER_HOST` if Testcontainers cannot find it automatically.
-
-The preflight requires no staged or unstaged tracked changes, verifies required tracked files, rejects credential-bearing tracked paths and submodules, exports `HEAD`, and requires successful Gitleaks and TruffleHog scans. Gitleaks 8.30.1, TruffleHog 3.97.4, and `jq` must be installed; a missing tool fails the check. Ignored and untracked local runtime files are not exported and do not block preflight. Scanner output is suppressed so findings cannot leak into shared logs. The fail-closed final mode is reserved for verifying the new clean-snapshot repository before publication.
-
-### Reviewing an unapproved scan candidate
-
-TruffleHog also flags text that merely looks like a credential. Each reviewed false positive is recorded in `approved_false_positive` against a fingerprint of the flagged text itself, so edits elsewhere in the file — and the line moving — keep the exception, while rewriting the flagged text retires it and asks for a fresh review.
-
-When preflight reports an unapproved candidate it names the detector and location but never the value, because build logs are shared. To review one:
-
-```bash
-bash scripts/verify-public-snapshot.sh --list-candidates
-```
-
-That prints every candidate in the tracked export with its fingerprint and approval status. **Open the reported line and read the flagged text before doing anything else.** If it is a real credential, move the value into Vault or user secrets and rotate it — it is already in the private history — rather than recording an exception. Only when the text is genuinely benign, add a `case` entry with its fingerprint and a comment saying what it is.
 
 ## Making a change
 
@@ -234,7 +214,7 @@ The PR body must contain `Closes #N` so the linked issue closes on merge.
 - Builds pass — backend and frontend
 - Tests pass, and new behavior comes with tests. Backend tests are xUnit v3 + Shouldly + NSubstitute + Bogus + Testcontainers, named `{Scenario}_Should{Outcome}`. Mock external services only (Vault, email) — never infrastructure or internal abstractions
 - Frontend changes keep WCAG AA and pass the AXE specs
-- No new credentials, keys, personal data, or machine-specific paths — the secret scan in CI will catch the obvious cases, but it is not a substitute for looking
+- No new credentials, keys, personal data, or machine-specific paths — GitHub secret scanning and push protection catch the obvious cases, but they are not a substitute for looking
 - Conventional PR title with a scope, and `Closes #N` in the body
 
 ## Issue labels
@@ -244,8 +224,6 @@ Every issue carries exactly one `type:*`, one `priority:*`, and at least one `ar
 - `type:` — `feat` · `fix` · `refactor` · `chore` · `test` · `docs` · `perf`
 - `priority:` — `p0` blocker · `p1` current focus · `p2` standard · `p3` nice-to-have
 - `area:` — `auth` · `resumes` · `users` · `identity` · `notifications` · `vault` · `infra` · `ui-shared` · `ux` · `tests-infra`
-
-New issues land in the project board's `Inbox` and are triaged weekly.
 
 ## Reporting security problems
 

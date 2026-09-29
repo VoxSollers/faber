@@ -50,7 +50,7 @@ tests/
 
 ### Backend
 
-Build a project directly — `Faber.slnx` requires .NET 9+, so build individual projects with SDK 8:
+Build the API project directly (or the whole solution with `Faber.sln`) using SDK 8:
 
 ```bash
 dotnet build src/api/Faber.Api/Faber.Api.csproj

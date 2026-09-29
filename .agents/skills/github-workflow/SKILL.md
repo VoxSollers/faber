@@ -1,18 +1,16 @@
 ---
 name: github-workflow
-description: Faber's GitHub issue/PR conventions — required labels, project board, release-please flow, and issue/PR templates. Use when creating or labeling issues, opening PRs, or handling a release.
+description: Faber's GitHub issue/PR conventions — required labels, release-please flow, and issue/PR templates. Use when creating or labeling issues, opening PRs, or handling a release.
 ---
 
 # GitHub Workflow
 
-Every issue must carry exactly one `type:*`, one `priority:*`, and at least one `area:*` label. New issues land in the `Faber` Project's `Inbox` status via `.github/workflows/add-to-project.yml` and are triaged weekly.
+Every issue must carry exactly one `type:*`, one `priority:*`, and at least one `area:*` label.
 
 **Labels** (orthogonal, mutually exclusive within each axis):
 - `type:` — `feat` · `fix` · `refactor` · `chore` · `test` · `docs` · `perf`
 - `priority:` — `p0` (blocker) · `p1` (current focus) · `p2` (standard) · `p3` (nice-to-have)
 - `area:` — `auth` · `resumes` · `users` · `identity` · `notifications` · `vault` · `infra` · `ui-shared` · `ux` · `tests-infra`
-
-**Project board** (`Faber`, user-level): single Kanban with columns `Inbox → Backlog → Up Next → In Progress → In Review → Done`. Custom fields: `Priority`, `Area`, `Iteration`, `Size`.
 
 **Release flow:** Conventional Commit titles on squash-merged PRs feed [release-please](https://github.com/googleapis/release-please). After merging to `main`, the bot opens (or updates) a release PR with the proposed semver bump and `CHANGELOG.md`. Merge the release PR to ship — this creates the git tag and GitHub Release automatically.
 - `feat` → minor bump · `fix`/`perf` → patch · `feat!` / `BREAKING CHANGE:` → major
