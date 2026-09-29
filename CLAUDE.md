@@ -36,4 +36,4 @@ The rest of the skill catalog is auto-tiered via `.claude/settings.json`; scope 
 
 ## GitHub Workflow
 
-Issue labeling, project board, release-please flow, and templates live in the `github-workflow` skill.
+Issue labeling, release-please flow, and templates live in the `github-workflow` skill.

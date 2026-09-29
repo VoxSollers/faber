@@ -34,7 +34,7 @@ Faber is a full-stack CV/resume builder:
 ## Common commands
 
 ```bash
-# Build an individual API project (the solution may require a newer SDK)
+# Build the API project (or the whole solution with Faber.sln)
 dotnet build src/api/Faber.Api/Faber.Api.csproj
 
 # Run all services through Aspire
