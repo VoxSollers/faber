@@ -39,6 +39,7 @@ public static class DependencyInjection
         });
 
         services.AddSingleton<IVaultModuleApi, VaultModuleApi>();
+        services.AddHostedService<VaultTokenRenewalService>();
 
         return services;
     }
