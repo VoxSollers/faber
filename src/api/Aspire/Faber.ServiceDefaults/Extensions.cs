@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +13,8 @@ namespace Faber.ServiceDefaults;
 
 public static class Extensions
 {
+    private const int InternalHealthPort = 7107;
+
     public static IHostApplicationBuilder AddServiceDefaults(this IHostApplicationBuilder builder)
     {
         builder.ConfigureOpenTelemetry();
@@ -78,24 +81,38 @@ public static class Extensions
 
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
+        if (app.Environment.IsProduction())
+        {
+            app.Use(async (context, next) =>
+            {
+                var isProbe = context.Request.Path.Equals("/ready", StringComparison.OrdinalIgnoreCase)
+                    || context.Request.Path.Equals("/alive", StringComparison.OrdinalIgnoreCase);
+                var isInternal = context.Connection.LocalPort == InternalHealthPort;
+
+                if (isInternal != isProbe)
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    return;
+                }
+
+                await next(context);
+            });
+        }
+
         if (app.Environment.IsDevelopment())
         {
             app.MapHealthChecks("/health");
-
-            app.MapHealthChecks(
-                "/alive",
-                new HealthCheckOptions
-                {
-                    Predicate = r => r.Tags.Contains("live")
-                });
-
-            app.MapHealthChecks(
-                "/ready",
-                new HealthCheckOptions
-                {
-                    Predicate = _ => true
-                });
         }
+
+        app.MapHealthChecks("/alive", new HealthCheckOptions
+        {
+            Predicate = r => r.Tags.Contains("live")
+        });
+
+        app.MapHealthChecks("/ready", new HealthCheckOptions
+        {
+            Predicate = r => r.Tags.Contains("ready")
+        });
 
         return app;
     }
