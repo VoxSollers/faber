@@ -47,6 +47,8 @@ public class WebApp : AppFixture<Program>
     private IContainer Vault =>
         _vaultContainer ?? throw new InvalidOperationException("Vault container not initialized");
 
+    public Task StopVaultAsync() => Vault.StopAsync();
+
     private KeycloakContainer Keycloak =>
         _keycloakContainer ?? throw new InvalidOperationException("Keycloak container not initialized");
 

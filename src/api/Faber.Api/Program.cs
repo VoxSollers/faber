@@ -1,6 +1,7 @@
 using Faber.Api.Caching;
 using Faber.Api.ExceptionHandlers;
 using Faber.Api.Http;
+using Faber.Api.Health;
 using Faber.Api.OpenApi;
 using Faber.Api.RateLimiting;
 using Faber.Modules.Auth.Application;
@@ -47,6 +48,8 @@ builder.Services
 await builder.Services.AddIdentityModuleAsync(builder.Environment, builder.Configuration);
 await builder.Services.AddResumesModuleAsync(builder.Configuration);
 
+builder.Services.AddApiReadinessChecks();
+
 builder.Services.AddFaberCaching(builder.Configuration);
 
 builder.Services
@@ -86,6 +89,8 @@ builder.Host.UseSerilog((_, config) => config.WriteTo.Console(), writeToProvider
 
 var app = builder.Build();
 
+app.MapDefaultEndpoints();
+
 app.UseForwardedHeaders();
 
 app
@@ -120,15 +125,18 @@ await app.UseDocumentsModuleAsync();
 
 app.UseCors("Faber.NgApp");
 
-if (app.Environment.IsProduction()) app.UseHttpsRedirection();
+if (app.Environment.IsProduction())
+{
+    app.UseWhen(
+        context => context.Connection.LocalPort != 7107,
+        branch => branch.UseHttpsRedirection());
+}
 
 app.UseAuthentication();
 
 app.UseFaberRateLimiting();
 
 app.UseAuthorization();
-
-app.MapDefaultEndpoints();
 
 app.Run();
 
